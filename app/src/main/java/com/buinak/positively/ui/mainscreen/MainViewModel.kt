@@ -9,19 +9,18 @@ import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MainViewModel() : ViewModel() {
+class MainViewModel : ViewModel() {
 
     @Inject
     lateinit var repository: MainRepository
 
     private val messages: MutableLiveData<String> = MutableLiveData()
 
+
     init {
         PositivelyApplication.inject(this)
 
-        var disposable = repository.observableTimer.subscribe { i -> messages.postValue(i.toString()) }
     }
 
     fun getMessagesLiveData(): LiveData<String> = messages
-
 }
