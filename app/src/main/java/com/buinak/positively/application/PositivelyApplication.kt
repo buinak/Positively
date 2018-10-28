@@ -6,13 +6,16 @@ import com.buinak.positively.di.ApplicationModule
 import com.buinak.positively.di.DaggerApplicationComponent
 import com.buinak.positively.ui.mainscreen.MainActivity
 import com.buinak.positively.ui.mainscreen.MainViewModel
+import io.realm.Realm
 
 class PositivelyApplication: Application() {
 
-    init {
+    override fun onCreate() {
+        super.onCreate()
         applicationComponent = DaggerApplicationComponent.builder()
-                .contextModule(ContextModule(this))
-                .build()
+            .contextModule(ContextModule(this))
+            .build()
+        Realm.init(this)
     }
 
     companion object Injector {
