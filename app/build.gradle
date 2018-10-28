@@ -37,6 +37,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:2.16"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }
 repositories {
     mavenCentral()

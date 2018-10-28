@@ -1,14 +1,14 @@
 package com.buinak.positively.ui.mainscreen
 
-import androidx.appcompat.app.AppCompatActivity
-
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
+import com.buinak.positively.ui.mainscreen.recyclerview.MoodsRecyclerViewAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,13 +17,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         viewModel =  ViewModelProviders.of(this).get(MainViewModel::class.java)
 
+        initialiseButtons()
+        initialiseRecyclerView()
+    }
+
+    private fun initialiseButtons() {
         findViewById<Button>(R.id.button_add).setOnClickListener { viewModel.onAddClicked() }
         findViewById<Button>(R.id.button_reset).setOnClickListener { viewModel.onResetClicked() }
+    }
 
-        val textView: TextView = findViewById(R.id.textView)
-        viewModel.getMessagesLiveData().observe(this, Observer { message -> textView.text = message })
+    private fun initialiseRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val adapter = MoodsRecyclerViewAdapter(ArrayList())
+        recyclerView.adapter = adapter
+
+        viewModel.getMoodsLiveData().observe(this, Observer { moods ->
+            adapter.moods = moods
+            adapter.notifyDataSetChanged()
+        })
     }
 }
