@@ -31,9 +31,10 @@ class MainRepository(val dataSource: DataSource) {
     fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
     fun addRandomDay() {
-        val year = 2018
+        val year = CalendarUtils.getCurrentYear()
         val month = (1..12).random()
         val day = (1..CalendarUtils.getAmountOfDaysInAMonth(year, month)).random()
+
         val dayEntry = DayEntry(day, month, year)
         val moodString = Mood.values()
                 .asList()

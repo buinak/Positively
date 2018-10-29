@@ -28,10 +28,9 @@ class LocalDatabaseInteractor {
         return Completable.fromAction {
             val realm = Realm.getDefaultInstance()
             if (realm.where(DayEntry::class.java)
-                            .equalTo("dayOfTheMonth", dayEntry.dayOfTheMonth)
-                            .equalTo("monthOfTheYear", dayEntry.monthOfTheYear)
-                            .equalTo("year", dayEntry.year)
-                            .findAll().size > 0) return@fromAction
+                    .findAll()
+                    .contains(dayEntry)
+            ) return@fromAction
             realm.use { realm.executeTransaction { r -> r.copyToRealm(dayEntry) } }
         }
     }
@@ -41,22 +40,22 @@ class LocalDatabaseInteractor {
         val subject: PublishSubject<List<DayEntry>> = PublishSubject.create()
         realm.use {
             realm.where(DayEntry::class.java)
-                    .findAllAsync()
-                    .asFlowable()
-                    .map { results ->
-                        val list = ArrayList<DayEntry>(results.size)
-                        //ADD UNMANAGED REALM OBJECTS TO A NEW LIST
-                        for (dayEntry in results) {
-                            //IF YEAR FILTERING IS ON, FILTER BY YEAR
-                            when (year) {
-                                0 -> list.add(realm.copyFromRealm(dayEntry))
-                                else -> if (dayEntry.year == year) list.add(realm.copyFromRealm(dayEntry))
-                            }
+                .findAllAsync()
+                .asFlowable()
+                .map { results ->
+                    val list = ArrayList<DayEntry>(results.size)
+                    //ADD UNMANAGED REALM OBJECTS TO A NEW LIST
+                    for (dayEntry in results) {
+                        //IF YEAR FILTERING IS ON, FILTER BY YEAR
+                        when (year) {
+                            0 -> list.add(realm.copyFromRealm(dayEntry))
+                            dayEntry.year -> list.add(realm.copyFromRealm(dayEntry))
                         }
-                        if (sorted) list.sort()
-                        return@map list.toList()
                     }
-                    .subscribe { resultList -> subject.onNext(resultList) }
+                    if (sorted) list.sort()
+                    return@map list.toList()
+                }
+                .subscribe { resultList -> subject.onNext(resultList) }
         }
         return subject
     }
@@ -67,8 +66,8 @@ class LocalDatabaseInteractor {
             realm.use {
                 realm.executeTransaction { r ->
                     r.where(DayEntry::class.java)
-                            .findAll()
-                            .deleteAllFromRealm()
+                        .findAll()
+                        .deleteAllFromRealm()
                 }
             }
         }

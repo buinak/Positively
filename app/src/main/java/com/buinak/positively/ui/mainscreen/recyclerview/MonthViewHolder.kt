@@ -25,18 +25,19 @@ import com.buinak.positively.entities.plain.Month
 
 class MonthViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    val monthTextView = itemView.findViewById<TextView>(R.id.textView_month)
-    val amountOfDaysTextView = itemView.findViewById<TextView>(R.id.textView_amountOfDays)
-    val customEntriesCountTextView = itemView.findViewById<TextView>(R.id.textView_customEntries)
+    private val monthTextView: TextView = itemView.findViewById(R.id.textView_month)
+    private val amountOfDaysTextView: TextView = itemView.findViewById(R.id.textView_amountOfDays)
+    private val customEntriesCountTextView: TextView = itemView.findViewById(R.id.textView_customEntries)
 
     fun bindMonth(list: List<DayEntry?>) {
         var month = ""
         val amountOfDays = "DAYS = ${list.size}"
         var customEntriesCount = 0
-        for (entry in list) if (entry != null) {
-            if (month == "") month = "MONTH = ${Month.values()[entry.monthOfTheYear - 1]}"
-            customEntriesCount++
-        }
+        list.filter { it != null }
+            .forEach { entry ->
+                if (month == "") month = "MONTH = ${Month.values()[entry!!.monthOfTheYear - 1]}"
+                customEntriesCount++
+            }
 
         monthTextView.text = month
         amountOfDaysTextView.text = amountOfDays
