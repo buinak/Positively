@@ -26,9 +26,15 @@ class MoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val idTextView = itemView.findViewById<TextView>(R.id.textView_id)
     val moodTextView = itemView.findViewById<TextView>(R.id.textView_mood)
+    val dateTextView = itemView.findViewById<TextView>(R.id.textView_date)
 
     fun bindMood(dayEntry: DayEntry) {
-        idTextView.text = dayEntry.id.slice(0..4)
-        moodTextView.text = dayEntry.mood
+        val idString = "ID = ${dayEntry.id.slice(0..4)}"
+        val moodString = "MOOD = ${dayEntry.mood}"
+        val dateString = "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear}.${dayEntry.year}"
+
+        idTextView.text = idString
+        moodTextView.text = moodString
+        dateTextView.text = dateString
     }
 }

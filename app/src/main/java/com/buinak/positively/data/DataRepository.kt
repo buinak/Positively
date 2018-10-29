@@ -23,6 +23,8 @@ import io.reactivex.Observable
 
 class DataRepository(val localDataSource: LocalDataSource) : DataSource {
     override fun removeAllDays(): Completable = localDataSource.removeAllDays()
-    override fun getAllDays(): Observable<List<DayEntry>> = localDataSource.getAllDays()
+    override fun getAllDays(year: Int, sorted: Boolean): Observable<List<DayEntry>> =
+            localDataSource.getAllDays(year, sorted)
+
     override fun saveDay(dayEntry: DayEntry): Completable = localDataSource.saveDay(dayEntry)
 }

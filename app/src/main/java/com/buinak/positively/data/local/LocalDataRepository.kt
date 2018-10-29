@@ -21,7 +21,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 
 class LocalDataRepository(val databaseInteractor: LocalDatabaseInteractor) : LocalDataSource {
-    override fun getAllDays(): Observable<List<DayEntry>> = databaseInteractor.getAllDays()
+    override fun getAllDays(year: Int, sorted: Boolean): Observable<List<DayEntry>> = databaseInteractor.getAllDays(year, sorted)
 
     override fun saveDay(dayEntry: DayEntry): Completable {
         return databaseInteractor.saveDay(dayEntry)

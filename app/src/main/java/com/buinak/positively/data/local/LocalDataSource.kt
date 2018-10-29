@@ -23,5 +23,5 @@ import io.reactivex.Observable
 interface LocalDataSource {
     fun saveDay(dayEntry: DayEntry): Completable
     fun removeAllDays(): Completable
-    fun getAllDays(): Observable<List<DayEntry>>
+    fun getAllDays(year: Int = 0, sorted: Boolean = false): Observable<List<DayEntry>>
 }

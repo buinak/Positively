@@ -27,35 +27,49 @@ class LocalDatabaseInteractor {
     fun saveDay(dayEntry: DayEntry): Completable {
         return Completable.fromAction {
             val realm = Realm.getDefaultInstance()
+            if (realm.where(DayEntry::class.java)
+                            .equalTo("dayOfTheMonth", dayEntry.dayOfTheMonth)
+                            .equalTo("monthOfTheYear", dayEntry.monthOfTheYear)
+                            .equalTo("year", dayEntry.year)
+                            .findAll().size > 0) return@fromAction
             realm.use { realm.executeTransaction { r -> r.copyToRealm(dayEntry) } }
         }
     }
 
-    fun getAllDays(): Observable<List<DayEntry>> {
+    fun getAllDays(year: Int, sorted: Boolean): Observable<List<DayEntry>> {
         val realm = Realm.getDefaultInstance()
-        val publishSubject = PublishSubject.create<List<DayEntry>>()
+        val subject: PublishSubject<List<DayEntry>> = PublishSubject.create()
         realm.use {
             realm.where(DayEntry::class.java)
-                .findAllAsync()
-                .asFlowable()
-                .subscribe { results ->
-                    val list = ArrayList<DayEntry>(results.size)
-                    for (dayEntry in results) {
-                        list.add(realm.copyFromRealm(dayEntry))
+                    .findAllAsync()
+                    .asFlowable()
+                    .map { results ->
+                        val list = ArrayList<DayEntry>(results.size)
+                        //ADD UNMANAGED REALM OBJECTS TO A NEW LIST
+                        for (dayEntry in results) {
+                            //IF YEAR FILTERING IS ON, FILTER BY YEAR
+                            when (year) {
+                                0 -> list.add(realm.copyFromRealm(dayEntry))
+                                else -> if (dayEntry.year == year) list.add(realm.copyFromRealm(dayEntry))
+                            }
+                        }
+                        if (sorted) list.sort()
+                        return@map list.toList()
                     }
-                    publishSubject.onNext(list)
-                }
+                    .subscribe { resultList -> subject.onNext(resultList) }
         }
-        return publishSubject
+        return subject
     }
 
     fun removeAllDays(): Completable {
         return Completable.fromAction {
             val realm = Realm.getDefaultInstance()
             realm.use {
-                realm.executeTransaction { r -> r.where(DayEntry::class.java)
-                    .findAll()
-                    .deleteAllFromRealm() }
+                realm.executeTransaction { r ->
+                    r.where(DayEntry::class.java)
+                            .findAll()
+                            .deleteAllFromRealm()
+                }
             }
         }
     }
