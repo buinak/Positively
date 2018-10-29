@@ -21,8 +21,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.plain.DayEntry
+import com.buinak.positively.utils.CalendarUtils.Companion.getAmountOfDaysInAMonth
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
 
 class MainViewModel : ViewModel() {
@@ -30,18 +32,42 @@ class MainViewModel : ViewModel() {
     @Inject
     lateinit var repository: MainRepository
 
-    private val moods: MutableLiveData<List<DayEntry>> = MutableLiveData()
+    private val moods: MutableLiveData<List<List<DayEntry?>>> = MutableLiveData()
     val disposable: CompositeDisposable = CompositeDisposable()
 
 
     init {
+        fun createListOfMonths(dayEntries: List<DayEntry>): List<List<DayEntry?>> {
+
+            //ASSUMING ALL OF THE ENTRIES HAVE THE SAME YEAR!!
+            val year: Int = when (dayEntries.size) {
+                0 -> Calendar.getInstance().get(Calendar.YEAR)
+                else -> dayEntries[0].year
+            }
+
+            val resultList = ArrayList<ArrayList<DayEntry?>>()
+            for (i in 1..12) {
+                val monthList = ArrayList<DayEntry?>()
+                for (dayIndex in 1..getAmountOfDaysInAMonth(year, i)) {
+                    monthList.add(null)
+                }
+                resultList.add(monthList)
+
+                //filter the list by months, add entries to the resulting list
+                dayEntries.filter { dayEntry -> dayEntry.monthOfTheYear == i }
+                    .forEach { (resultList[i - 1])[it.dayOfTheMonth - 1] = it }
+            }
+            return resultList
+        }
+
         PositivelyApplication.inject(this)
         disposable.add(repository.getObservableSavedDays()
             .subscribeOn(Schedulers.io())
+            .map { createListOfMonths(it) }
             .subscribe { moods.postValue(it) })
     }
 
-    fun getMoodsLiveData(): LiveData<List<DayEntry>> = moods
+    fun getMoodsLiveData(): LiveData<List<List<DayEntry?>>> = moods
     fun onAddClicked() = repository.addRandomDay()
     fun onResetClicked() = repository.resetAll()
 

@@ -18,13 +18,14 @@ package com.buinak.positively.ui.mainscreen
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
-import com.buinak.positively.ui.mainscreen.recyclerview.MoodsRecyclerViewAdapter
+import com.buinak.positively.ui.mainscreen.recyclerview.MonthsAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,10 +48,13 @@ class MainActivity : AppCompatActivity() {
     private fun initialiseRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = MoodsRecyclerViewAdapter(ArrayList())
+        val adapter = MonthsAdapter(ArrayList())
         recyclerView.adapter = adapter
 
         viewModel.getMoodsLiveData().observe(this, Observer { moods ->
+            var count = 0
+            moods.forEach { it.forEach { entry -> if (entry != null) count++ } }
+            findViewById<TextView>(R.id.textView_totalNumber).text = "TOTAL COUNT = $count"
             adapter.moods = moods
             adapter.notifyDataSetChanged()
         })

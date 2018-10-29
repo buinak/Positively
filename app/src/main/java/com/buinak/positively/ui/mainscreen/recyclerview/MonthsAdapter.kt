@@ -16,25 +16,22 @@
 
 package com.buinak.positively.ui.mainscreen.recyclerview
 
-import android.view.View
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
 import com.buinak.positively.entities.plain.DayEntry
 
-class MoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MonthsAdapter(var moods: List<List<DayEntry?>>) : RecyclerView.Adapter<MonthViewHolder>() {
+    override fun getItemCount(): Int = moods.size
 
-    val idTextView = itemView.findViewById<TextView>(R.id.textView_id)
-    val moodTextView = itemView.findViewById<TextView>(R.id.textView_mood)
-    val dateTextView = itemView.findViewById<TextView>(R.id.textView_date)
+    override fun onBindViewHolder(holder: MonthViewHolder, position: Int) {
+        holder.bindMonth(moods[position])
+    }
 
-    fun bindMood(dayEntry: DayEntry) {
-        val idString = "ID = ${dayEntry.id.slice(0..4)}"
-        val moodString = "MOOD = ${dayEntry.mood}"
-        val dateString = "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear}.${dayEntry.year}"
-
-        idTextView.text = idString
-        moodTextView.text = moodString
-        dateTextView.text = dateString
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MonthViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.activity_main_recycler_view_row, parent, false)
+        return MonthViewHolder(view)
     }
 }

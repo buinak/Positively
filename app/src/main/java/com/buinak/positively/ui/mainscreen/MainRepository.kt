@@ -19,6 +19,7 @@ package com.buinak.positively.ui.mainscreen
 import com.buinak.positively.data.DataSource
 import com.buinak.positively.entities.plain.DayEntry
 import com.buinak.positively.entities.plain.Mood
+import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -27,10 +28,13 @@ fun IntRange.random() =
         Random().nextInt((endInclusive + 1) - start) + start
 
 class MainRepository(val dataSource: DataSource) {
-    fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(sorted = true)
+    fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
     fun addRandomDay() {
-        val dayEntry = DayEntry((1..30).random(), (1..12).random(), (1990..1995).random())
+        val year = 2018
+        val month = (1..12).random()
+        val day = (1..CalendarUtils.getAmountOfDaysInAMonth(year, month)).random()
+        val dayEntry = DayEntry(day, month, year)
         val moodString = Mood.values()
                 .asList()
                 .shuffled()
