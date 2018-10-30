@@ -22,8 +22,10 @@ import java.util.*
 open class DayEntry (var dayOfTheMonth: Int = 1,
                      var monthOfTheYear: Int = 1,
                      var year: Int = 1990,
-                     var mood: String = "UNKNOWN"
+                     var mood: String = "UNKNOWN",
+                     var id: String = UUID.randomUUID().toString()
 ) : RealmObject(), Comparable<DayEntry> {
+
 
     override fun compareTo(other: DayEntry): Int = when {
         year != other.year -> year.compareTo(other.year)
@@ -32,11 +34,11 @@ open class DayEntry (var dayOfTheMonth: Int = 1,
         else -> 0
     }
 
-    var id: String = UUID.randomUUID().toString()
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is DayEntry) return false
+
+        if (id == other.id) return true
 
         if (dayOfTheMonth != other.dayOfTheMonth) return false
         if (monthOfTheYear != other.monthOfTheYear) return false

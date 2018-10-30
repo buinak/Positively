@@ -41,9 +41,9 @@ class MainActivity : AppCompatActivity() {
         viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
             onTextViewSelected(dayOfTheWeek.first)
             val dayEntry = dayOfTheWeek.second
-            findViewById<TextView>(R.id.textView_year).text = dayEntry.year.toString()
-            findViewById<TextView>(R.id.textView_month).text = dayEntry.monthOfTheYear.toString()
-            findViewById<TextView>(R.id.textView_day).text = dayEntry.dayOfTheMonth.toString()
+            val dateString = "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear}.${dayEntry.year}"
+            findViewById<TextView>(R.id.textView_date).text = dateString
+            findViewById<TextView>(R.id.textView_id).text = "ID = ${dayEntry.id.substring(0..5)}"
         })
     }
 
