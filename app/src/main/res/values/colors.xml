@@ -29,4 +29,7 @@
     <color name="saturdayColor">#e53935</color>
     <color name="sundayColor">#fbc02d</color>
 
+    <color name="greyColor">#757575</color>
+
+
 </resources>

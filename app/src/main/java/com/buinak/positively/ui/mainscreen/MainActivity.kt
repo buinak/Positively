@@ -23,6 +23,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.utils.ViewUtils
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +66,31 @@ class MainActivity : AppCompatActivity() {
             .first { it.first == dayOfTheWeek }
             .second
 
-        window.statusBarColor = selectedTextView.currentTextColor
+//        window.statusBarColor = selectedTextView.currentTextColor
+//
+        // FIRST COLOR = 200 R 0 G 0 B
+        // SECOND COLOR = 150 R 100 G 0 B
+        // FIRST COLOR -> SECOND COLOR
+        // duration = 200
+        // frames = 30 / (1000 / 200) = 6
+        // (150 - 200) / 6 = -8.6R
+        // (100 - 0) / 6 = 18.5G
+        // TIMER RUN AT (1000 / 30) = 33.3
+
+        //TODO: manual animations for windows and so on
+        ViewUtils.animateTextColourChange(
+            findViewById(R.id.textView_date),
+            selectedTextView.currentTextColor,
+            300
+        )
+        ViewUtils.animateWindowColourChange(
+            window,
+            selectedTextView.currentTextColor,
+            300
+        )
+//        findViewById<ImageView>(R.id.imageView_arrowLeft).setColorFilter(selectedTextView.currentTextColor)
+//        findViewById<ImageView>(R.id.imageView_arrowRight).setColorFilter(selectedTextView.currentTextColor)
+
         allDayTextViewMap.values.forEach { it.text = it.text.substring(0, 1) }
         selectedTextView.text = allDayTextViewMap.toList()
             .first { it.second == selectedTextView }
