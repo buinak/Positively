@@ -19,8 +19,12 @@ package com.buinak.positively.data.local
 import com.buinak.positively.entities.plain.DayEntry
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class LocalDataRepository(val databaseInteractor: LocalDatabaseInteractor) : LocalDataSource {
+    override fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry> =
+        databaseInteractor.getSpecificDay(year, month, day)
+
     override fun getAllDays(year: Int, sorted: Boolean): Observable<List<DayEntry>> = databaseInteractor.getAllDays(year, sorted)
 
     override fun saveDay(dayEntry: DayEntry): Completable {

@@ -19,6 +19,7 @@ package com.buinak.positively.data.local
 import com.buinak.positively.entities.plain.DayEntry
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import io.realm.Realm
 
@@ -32,6 +33,27 @@ class LocalDatabaseInteractor {
                     .contains(dayEntry)
             ) return@fromAction
             realm.use { realm.executeTransaction { r -> r.copyToRealm(dayEntry) } }
+        }
+    }
+
+    fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry> {
+        val realm = Realm.getDefaultInstance()
+        realm.use {
+            val result = realm.where(DayEntry::class.java)
+                .findAll()
+                .firstOrNull { dayEntry ->
+                    dayEntry.year == year &&
+                            dayEntry.monthOfTheYear == month &&
+                            dayEntry.dayOfTheMonth == day
+                }
+            return when (result) {
+                null -> {
+                    val newDay = DayEntry(day, month, year)
+                    realm.executeTransaction { r -> r.copyToRealm(newDay) }
+                    Single.just(newDay)
+                }
+                else -> Single.just(realm.copyFromRealm(result))
+            }
         }
     }
 

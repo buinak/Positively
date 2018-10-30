@@ -19,9 +19,12 @@ package com.buinak.positively.data
 import com.buinak.positively.entities.plain.DayEntry
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 interface DataSource {
     fun saveDay(dayEntry: DayEntry): Completable
     fun removeAllDays(): Completable
+
     fun getAllDays(year: Int = 0, sorted: Boolean = false): Observable<List<DayEntry>>
+    fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry>
 }

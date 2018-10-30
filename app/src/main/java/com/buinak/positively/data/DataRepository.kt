@@ -20,8 +20,13 @@ import com.buinak.positively.data.local.LocalDataSource
 import com.buinak.positively.entities.plain.DayEntry
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class DataRepository(val localDataSource: LocalDataSource) : DataSource {
+    override fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry> =
+        localDataSource.getSpecificDay(year, month, day)
+
+
     override fun removeAllDays(): Completable = localDataSource.removeAllDays()
     override fun getAllDays(year: Int, sorted: Boolean): Observable<List<DayEntry>> =
             localDataSource.getAllDays(year, sorted)

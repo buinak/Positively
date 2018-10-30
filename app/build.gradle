@@ -24,7 +24,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.buinak.positively"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -62,7 +62,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
     testImplementation "org.robolectric:robolectric:4.0"
-    implementation 'com.google.android.gms:play-services-ads:17.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
 repositories {
     mavenCentral()

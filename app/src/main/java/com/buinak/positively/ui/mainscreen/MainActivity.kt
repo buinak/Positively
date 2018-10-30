@@ -17,46 +17,69 @@
 package com.buinak.positively.ui.mainscreen
 
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
-import com.buinak.positively.ui.mainscreen.recyclerview.MonthsAdapter
+import com.buinak.positively.entities.plain.DayOfTheWeek
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MainViewModel
+    private val allDayTextViewMap: HashMap<DayOfTheWeek, TextView> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel =  ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(this)
+            .get(MainViewModel::class.java)
 
-        initialiseButtons()
-        initialiseRecyclerView()
-    }
+        fillMapWithTextViews()
+        initialiseTextViewClickListeners()
 
-    private fun initialiseButtons() {
-        findViewById<Button>(R.id.button_add).setOnClickListener { viewModel.onAddClicked() }
-        findViewById<Button>(R.id.button_reset).setOnClickListener { viewModel.onResetClicked() }
-    }
-
-    private fun initialiseRecyclerView() {
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = MonthsAdapter(ArrayList())
-        recyclerView.adapter = adapter
-
-        viewModel.getMoodsLiveData().observe(this, Observer { moods ->
-            var count = 0
-            moods.forEach { it.forEach { entry -> if (entry != null) count++ } }
-            findViewById<TextView>(R.id.textView_totalNumber).text = "TOTAL COUNT = $count"
-            adapter.moods = moods
-            adapter.notifyDataSetChanged()
+        viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
+            onTextViewSelected(dayOfTheWeek.first)
+            val dayEntry = dayOfTheWeek.second
+            findViewById<TextView>(R.id.textView_year).text = dayEntry.year.toString()
+            findViewById<TextView>(R.id.textView_month).text = dayEntry.monthOfTheYear.toString()
+            findViewById<TextView>(R.id.textView_day).text = dayEntry.dayOfTheMonth.toString()
         })
+    }
+
+    private fun initialiseTextViewClickListeners() {
+        allDayTextViewMap.values.forEach { textView ->
+            textView.setOnClickListener { clickedView ->
+                val clickedTextView = clickedView as TextView
+                val dayOfTheWeek = allDayTextViewMap.toList()
+                    .first { it.second == clickedTextView }
+                    .first
+
+                viewModel.onDaySelected(dayOfTheWeek)
+            }
+        }
+    }
+
+    private fun onTextViewSelected(dayOfTheWeek: DayOfTheWeek) {
+        val selectedTextView: TextView = allDayTextViewMap.toList()
+            .first { it.first == dayOfTheWeek }
+            .second
+
+        window.statusBarColor = selectedTextView.currentTextColor
+        allDayTextViewMap.values.forEach { it.text = it.text.substring(0, 1) }
+        selectedTextView.text = allDayTextViewMap.toList()
+            .first { it.second == selectedTextView }
+            .first
+            .toString()
+    }
+
+    private fun fillMapWithTextViews() {
+        allDayTextViewMap[DayOfTheWeek.MONDAY] = findViewById(R.id.textView_monday)
+        allDayTextViewMap[DayOfTheWeek.TUESDAY] = findViewById(R.id.textView_tuesday)
+        allDayTextViewMap[DayOfTheWeek.WEDNESDAY] = findViewById(R.id.textView_wednesday)
+        allDayTextViewMap[DayOfTheWeek.THURSDAY] = findViewById(R.id.textView_thursday)
+        allDayTextViewMap[DayOfTheWeek.FRIDAY] = findViewById(R.id.textView_friday)
+        allDayTextViewMap[DayOfTheWeek.SATURDAY] = findViewById(R.id.textView_saturday)
+        allDayTextViewMap[DayOfTheWeek.SUNDAY] = findViewById(R.id.textView_sunday)
     }
 }

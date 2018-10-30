@@ -17,6 +17,16 @@
 
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <!--<color name="colorPrimaryDark">#00574B</color>-->
+    <color name="colorPrimaryDark">#D81B60</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="mondayColor">#7cb342</color>
+    <color name="tuesdayColor">#f57c00</color>
+    <color name="wednesdayColor">#00acc1</color>
+    <color name="thursdayColor">#3949ab</color>
+    <color name="fridayColor">#8e24aa</color>
+    <color name="saturdayColor">#e53935</color>
+    <color name="sundayColor">#fbc02d</color>
+
 </resources>

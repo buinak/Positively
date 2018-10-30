@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.data.local
+package com.buinak.positively.entities.plain
 
-import com.buinak.positively.entities.plain.DayEntry
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-
-interface LocalDataSource {
-    fun saveDay(dayEntry: DayEntry): Completable
-    fun removeAllDays(): Completable
-
-    fun getAllDays(year: Int = 0, sorted: Boolean = false): Observable<List<DayEntry>>
-    fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry>
+enum class DayOfTheWeek {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
 }
