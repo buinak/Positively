@@ -82,6 +82,20 @@ object ViewUtils {
         backgroundColorAnimator.start()
     }
 
+    fun animateTextHintColourChange(view: EditText, colourTo: Int, duration: Int) {
+        val colourFrom = view.currentTextColor
+        val backgroundColorAnimator = ObjectAnimator.ofObject(
+            view,
+            "hintTextColor",
+            ArgbEvaluator(),
+            colourFrom,
+            colourTo
+        )
+
+        backgroundColorAnimator.duration = duration.toLong()
+        backgroundColorAnimator.start()
+    }
+
     fun animateCardViewColourChange(view: CardView, colourFrom: Int, colourTo: Int, duration: Int) {
         val backgroundColorAnimator = ObjectAnimator.ofObject(
             view,

@@ -119,7 +119,9 @@ class MainActivity : AppCompatActivity() {
 
         animateViews(selectedTextView.currentTextColor)
 
-        allDayTextViewMap.keys.forEach { it.text = it.text.substring(0, 1) }
+        allDayTextViewMap.keys.forEach { it ->
+            it.text = it.text.substring(0, 1)
+        }
         selectedTextView.text = allDayTextViewMap[selectedTextView].toString()
     }
 
@@ -129,6 +131,12 @@ class MainActivity : AppCompatActivity() {
             colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
+        ViewUtils.animateTextHintColourChange(
+            noteEditText,
+            colourTo,
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
+        )
+
         ViewUtils.animateTextColourChange(
             noteEditText,
             colourTo,
