@@ -17,18 +17,20 @@
 package com.buinak.positively.ui.mainscreen
 
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.ViewUtils
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
-    private val allDayTextViewMap: HashMap<DayOfTheWeek, TextView> = HashMap()
+    private val allDayTextViewMap: HashMap<TextView, DayOfTheWeek> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,74 +39,70 @@ class MainActivity : AppCompatActivity() {
             .get(MainViewModel::class.java)
 
         fillMapWithTextViews()
-        initialiseTextViewClickListeners()
+        initialiseClickListeners()
 
         viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
-            onTextViewSelected(dayOfTheWeek.first)
+            onDayOfTheWeekSelected(dayOfTheWeek.first)
             val dayEntry = dayOfTheWeek.second
-            val dateString = "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear}.${dayEntry.year}"
+            val dateString =
+                "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear + 1}.${dayEntry.year}"
             findViewById<TextView>(R.id.textView_date).text = dateString
             findViewById<TextView>(R.id.textView_id).text = "ID = ${dayEntry.id.substring(0..5)}"
         })
+
+        viewModel.getCurrentMonth().observe(this, Observer {
+            findViewById<TextView>(R.id.textView_month).text = it
+        })
     }
 
-    private fun initialiseTextViewClickListeners() {
-        allDayTextViewMap.values.forEach { textView ->
+    private fun initialiseClickListeners() {
+        //for all day of the week text views
+        allDayTextViewMap.keys.forEach { textView ->
             textView.setOnClickListener { clickedView ->
                 val clickedTextView = clickedView as TextView
-                val dayOfTheWeek = allDayTextViewMap.toList()
-                    .first { it.second == clickedTextView }
-                    .first
-
-                viewModel.onDaySelected(dayOfTheWeek)
+                val dayOfTheWeek = allDayTextViewMap[clickedTextView]
+                //can not be null
+                viewModel.onDaySelected(dayOfTheWeek!!)
             }
         }
+        //for go-to-the-next-week arrows
+        findViewById<ImageView>(R.id.imageView_arrowRight).setOnClickListener { viewModel.onGoRightClicked() }
+        findViewById<ImageView>(R.id.imageView_arrowLeft).setOnClickListener { viewModel.onGoLeftClicked() }
+        findViewById<TextView>(R.id.textView_date).setOnClickListener { viewModel.onDayResetToToday() }
     }
 
-    private fun onTextViewSelected(dayOfTheWeek: DayOfTheWeek) {
+
+    private fun onDayOfTheWeekSelected(dayOfTheWeek: DayOfTheWeek) {
         val selectedTextView: TextView = allDayTextViewMap.toList()
-            .first { it.first == dayOfTheWeek }
-            .second
+            .first { it.second == dayOfTheWeek }.first
 
-//        window.statusBarColor = selectedTextView.currentTextColor
-//
-        // FIRST COLOR = 200 R 0 G 0 B
-        // SECOND COLOR = 150 R 100 G 0 B
-        // FIRST COLOR -> SECOND COLOR
-        // duration = 200
-        // frames = 30 / (1000 / 200) = 6
-        // (150 - 200) / 6 = -8.6R
-        // (100 - 0) / 6 = 18.5G
-        // TIMER RUN AT (1000 / 30) = 33.3
-
-        //TODO: manual animations for windows and so on
         ViewUtils.animateTextColourChange(
             findViewById(R.id.textView_date),
             selectedTextView.currentTextColor,
-            300
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
+        )
+        ViewUtils.animateTextColourChange(
+            findViewById(R.id.textView_month),
+            selectedTextView.currentTextColor,
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
         ViewUtils.animateWindowColourChange(
             window,
             selectedTextView.currentTextColor,
-            300
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
-//        findViewById<ImageView>(R.id.imageView_arrowLeft).setColorFilter(selectedTextView.currentTextColor)
-//        findViewById<ImageView>(R.id.imageView_arrowRight).setColorFilter(selectedTextView.currentTextColor)
 
-        allDayTextViewMap.values.forEach { it.text = it.text.substring(0, 1) }
-        selectedTextView.text = allDayTextViewMap.toList()
-            .first { it.second == selectedTextView }
-            .first
-            .toString()
+        allDayTextViewMap.keys.forEach { it.text = it.text.substring(0, 1) }
+        selectedTextView.text = allDayTextViewMap[selectedTextView].toString()
     }
 
     private fun fillMapWithTextViews() {
-        allDayTextViewMap[DayOfTheWeek.MONDAY] = findViewById(R.id.textView_monday)
-        allDayTextViewMap[DayOfTheWeek.TUESDAY] = findViewById(R.id.textView_tuesday)
-        allDayTextViewMap[DayOfTheWeek.WEDNESDAY] = findViewById(R.id.textView_wednesday)
-        allDayTextViewMap[DayOfTheWeek.THURSDAY] = findViewById(R.id.textView_thursday)
-        allDayTextViewMap[DayOfTheWeek.FRIDAY] = findViewById(R.id.textView_friday)
-        allDayTextViewMap[DayOfTheWeek.SATURDAY] = findViewById(R.id.textView_saturday)
-        allDayTextViewMap[DayOfTheWeek.SUNDAY] = findViewById(R.id.textView_sunday)
+        allDayTextViewMap[findViewById(R.id.textView_monday)] = DayOfTheWeek.MONDAY
+        allDayTextViewMap[findViewById(R.id.textView_tuesday)] = DayOfTheWeek.TUESDAY
+        allDayTextViewMap[findViewById(R.id.textView_wednesday)] = DayOfTheWeek.WEDNESDAY
+        allDayTextViewMap[findViewById(R.id.textView_thursday)] = DayOfTheWeek.THURSDAY
+        allDayTextViewMap[findViewById(R.id.textView_friday)] = DayOfTheWeek.FRIDAY
+        allDayTextViewMap[findViewById(R.id.textView_saturday)] = DayOfTheWeek.SATURDAY
+        allDayTextViewMap[findViewById(R.id.textView_sunday)] = DayOfTheWeek.SUNDAY
     }
 }

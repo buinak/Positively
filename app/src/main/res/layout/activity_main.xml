@@ -37,7 +37,7 @@
                 android:id="@+id/textView_monday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginBottom="16dp"
                 android:text="MONDAY"
                 android:textColor="@color/mondayColor"
@@ -157,6 +157,17 @@
                 app:layout_constraintStart_toEndOf="@+id/textView_date"
                 app:layout_constraintTop_toTopOf="@+id/textView_date"
                 app:srcCompat="@drawable/ic_arrow_right_black_24dp" />
+
+            <TextView
+                android:id="@+id/textView_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="TextView"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="@+id/textView_date"
+                app:layout_constraintStart_toStartOf="@+id/textView_date"
+                app:layout_constraintTop_toBottomOf="@+id/textView_date" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

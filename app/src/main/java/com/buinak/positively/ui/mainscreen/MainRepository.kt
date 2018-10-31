@@ -19,11 +19,9 @@ package com.buinak.positively.ui.mainscreen
 import com.buinak.positively.data.DataSource
 import com.buinak.positively.entities.plain.DayEntry
 import com.buinak.positively.entities.plain.DayOfTheWeek
-import com.buinak.positively.entities.plain.Mood
 import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 fun IntRange.random() =
@@ -39,6 +37,9 @@ class MainRepository(val dataSource: DataSource) {
     fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
     fun getToday(): Single<Pair<DayOfTheWeek, DayEntry>> {
+        currentYear = CalendarUtils.getCurrentYear()
+        currentMonth = CalendarUtils.getCurrentMonth()
+        currentDay = CalendarUtils.getCurrentDayOfTheMonth()
         currentDayOfTheWeek = CalendarUtils.getCurrentDayOfTheWeek()
         return dataSource.getSpecificDay(currentYear, currentMonth, currentDay)
             .map { dayEntry ->
@@ -47,10 +48,21 @@ class MainRepository(val dataSource: DataSource) {
     }
 
     fun getSpecificDay(dayOfTheWeek: DayOfTheWeek): Single<Pair<DayOfTheWeek, DayEntry>> {
+        val difference = dayOfTheWeek.ordinal - currentDayOfTheWeek.ordinal
+        return getDayWithDifference(difference)
+    }
+
+    fun getDayWithDifference(
+        difference: Int,
+        backwards: Boolean = false
+    ): Single<Pair<DayOfTheWeek, DayEntry>> {
         val calendar = Calendar.getInstance()
         calendar.set(currentYear, currentMonth, currentDay)
-        val difference = dayOfTheWeek.ordinal - currentDayOfTheWeek.ordinal
-        calendar.add(Calendar.DATE, difference)
+        if (backwards) {
+            calendar.add(Calendar.DATE, -difference)
+        } else {
+            calendar.add(Calendar.DATE, difference)
+        }
 
         currentYear = calendar.get(Calendar.YEAR)
         currentMonth = calendar.get(Calendar.MONTH)
@@ -61,29 +73,5 @@ class MainRepository(val dataSource: DataSource) {
             .map { dayEntry ->
                 Pair(currentDayOfTheWeek, dayEntry)
             }
-    }
-
-    fun addRandomDay() {
-        val year = CalendarUtils.getCurrentYear()
-        val month = (1..12).random()
-        val day = (1..CalendarUtils.getAmountOfDaysInAMonth(year, month)).random()
-
-        val dayEntry = DayEntry(day, month, year)
-        val moodString = Mood.values()
-            .asList()
-            .shuffled()
-            .first()
-            .toString()
-        dayEntry.mood = moodString
-
-        dataSource.saveDay(dayEntry)
-            .subscribeOn(Schedulers.io())
-            .subscribe()
-    }
-
-    fun resetAll() {
-        dataSource.removeAllDays()
-            .subscribeOn(Schedulers.io())
-            .subscribe()
     }
 }

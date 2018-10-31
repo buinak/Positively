@@ -19,8 +19,7 @@ package com.buinak.positively.utils
 import com.buinak.positively.entities.plain.DayEntry
 import java.util.*
 
-class ListUtils {
-    companion object {
+object ListUtils {
         //takes a list of day entries and outputs a list of months with those entries and null entries
         // for the entire year
         fun createListOfMonths(dayEntries: List<DayEntry>): List<List<DayEntry?>> {
@@ -45,5 +44,4 @@ class ListUtils {
             }
             return resultList
         }
-    }
 }

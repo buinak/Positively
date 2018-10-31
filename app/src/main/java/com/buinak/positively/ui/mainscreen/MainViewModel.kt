@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.plain.DayEntry
 import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.entities.plain.Month
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -30,23 +31,51 @@ class MainViewModel : ViewModel() {
 
     @Inject
     lateinit var repository: MainRepository
-    private val currentSelectedDay: MutableLiveData<Pair<DayOfTheWeek, DayEntry>> = MutableLiveData()
-    val disposable: CompositeDisposable = CompositeDisposable()
+    private val currentSelectedDay: MutableLiveData<Pair<DayOfTheWeek, DayEntry>> =
+        MutableLiveData()
+    private val currentMonth: MutableLiveData<String> = MutableLiveData()
+    private val disposable: CompositeDisposable = CompositeDisposable()
 
 
     init {
         PositivelyApplication.inject(this)
-        disposable.add(repository.getToday()
-            .subscribeOn(Schedulers.io())
-            .subscribe { it -> currentSelectedDay.postValue(it) })
+        requestRepositoryDayAndSubscribe()
     }
 
     fun getCurrentlySelectedDay(): LiveData<Pair<DayOfTheWeek, DayEntry>> = currentSelectedDay
+    fun getCurrentMonth(): LiveData<String> = currentMonth
 
-    fun onDaySelected(dayOfTheWeek: DayOfTheWeek) {
+    fun onDayResetToToday() = requestRepositoryDayAndSubscribe()
+    fun onDaySelected(dayOfTheWeek: DayOfTheWeek) = requestRepositoryDayAndSubscribe(dayOfTheWeek)
+    fun onGoRightClicked() = requestRepositoryDayAndSubscribe(1)
+    fun onGoLeftClicked() = requestRepositoryDayAndSubscribe(1, true)
+
+
+    private fun requestRepositoryDayAndSubscribe(difference: Int, backwards: Boolean = false) {
+        disposable.add(repository.getDayWithDifference(difference, backwards)
+            .subscribeOn(Schedulers.io())
+            .subscribe { it ->
+                currentSelectedDay.postValue(it)
+                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+            })
+    }
+
+    private fun requestRepositoryDayAndSubscribe() {
+        disposable.add(repository.getToday()
+            .subscribeOn(Schedulers.io())
+            .subscribe { it ->
+                currentSelectedDay.postValue(it)
+                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+            })
+    }
+
+    private fun requestRepositoryDayAndSubscribe(dayOfTheWeek: DayOfTheWeek) {
         disposable.add(repository.getSpecificDay(dayOfTheWeek)
             .subscribeOn(Schedulers.io())
-            .subscribe { it -> currentSelectedDay.postValue(it) })
+            .subscribe { it ->
+                currentSelectedDay.postValue(it)
+                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+            })
     }
 
     override fun onCleared() {

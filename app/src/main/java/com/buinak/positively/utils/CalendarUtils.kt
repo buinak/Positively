@@ -20,8 +20,7 @@ import com.buinak.positively.entities.plain.DayOfTheWeek
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CalendarUtils {
-    companion object {
+object CalendarUtils {
         fun getAmountOfDaysInAMonth(year: Int, month: Int) =
             GregorianCalendar(year, month - 1, 1).getActualMaximum(Calendar.DAY_OF_MONTH)
 
@@ -34,5 +33,4 @@ class CalendarUtils {
 
         private fun getDayString(calendar: Calendar) = SimpleDateFormat("EEEE", Locale.ENGLISH)
             .format(calendar.time.time)
-    }
 }

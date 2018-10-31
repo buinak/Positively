@@ -29,6 +29,7 @@ import androidx.cardview.widget.CardView
 
 object ViewUtils {
 
+    //TODO: manual animations for windows and so on
     fun animateViewColourChange(view: View, colourFrom: Int, colourTo: Int, duration: Int) {
         val backgroundColorAnimator = ObjectAnimator.ofObject(
             view,
