@@ -78,6 +78,8 @@ class MainViewModel : ViewModel() {
             })
     }
 
+    fun onNoteTextChanged(text: String) = repository.onDayEntryNoteChanged(text)
+
     override fun onCleared() {
         super.onCleared()
         disposable.dispose()

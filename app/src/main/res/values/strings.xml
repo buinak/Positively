@@ -16,4 +16,5 @@
 
 <resources>
     <string name="app_name">Positively</string>
+    <string name="how_was_your_day">How was your day?</string>
 </resources>

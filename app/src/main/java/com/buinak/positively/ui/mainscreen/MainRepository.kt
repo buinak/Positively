@@ -22,7 +22,9 @@ import com.buinak.positively.entities.plain.DayOfTheWeek
 import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 fun IntRange.random() =
     Random().nextInt((endInclusive + 1) - start) + start
@@ -34,6 +36,24 @@ class MainRepository(val dataSource: DataSource) {
     var currentDay = CalendarUtils.getCurrentDayOfTheMonth()
     var currentDayOfTheWeek: DayOfTheWeek = CalendarUtils.getCurrentDayOfTheWeek()
 
+    lateinit var lastDayEntry: DayEntry
+
+    var noteObservable: PublishSubject<String> = PublishSubject.create()
+
+    init {
+        val disposable = noteObservable
+            .debounce(100, TimeUnit.MILLISECONDS)
+            .subscribe { text ->
+                if (lastDayEntry.note != text) {
+                    lastDayEntry.note = text
+                    dataSource
+                        .saveDay(lastDayEntry)
+                        .subscribe()
+                }
+            }
+
+    }
+
     fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
     fun getToday(): Single<Pair<DayOfTheWeek, DayEntry>> {
@@ -42,6 +62,7 @@ class MainRepository(val dataSource: DataSource) {
         currentDay = CalendarUtils.getCurrentDayOfTheMonth()
         currentDayOfTheWeek = CalendarUtils.getCurrentDayOfTheWeek()
         return dataSource.getSpecificDay(currentYear, currentMonth, currentDay)
+            .doOnSuccess { lastDayEntry = it }
             .map { dayEntry ->
                 Pair(currentDayOfTheWeek, dayEntry)
             }
@@ -70,8 +91,12 @@ class MainRepository(val dataSource: DataSource) {
         currentDayOfTheWeek = CalendarUtils.getSpecificDayOfTheWeek(calendar)
 
         return dataSource.getSpecificDay(currentYear, currentMonth, currentDay)
+            .doOnSuccess { lastDayEntry = it }
             .map { dayEntry ->
                 Pair(currentDayOfTheWeek, dayEntry)
             }
     }
+
+    fun onDayEntryNoteChanged(text: String) = noteObservable.onNext(text)
+
 }

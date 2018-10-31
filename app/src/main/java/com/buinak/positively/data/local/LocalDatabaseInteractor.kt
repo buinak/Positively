@@ -28,10 +28,24 @@ class LocalDatabaseInteractor {
     fun saveDay(dayEntry: DayEntry): Completable {
         return Completable.fromAction {
             val realm = Realm.getDefaultInstance()
-            if (realm.where(DayEntry::class.java)
-                    .findAll()
-                    .contains(dayEntry)
-            ) return@fromAction
+            //if the dayentry matches the ID
+            if (realm.where(DayEntry::class.java).equalTo("id", dayEntry.id).findFirst() != null) {
+                realm.use {
+                    realm.executeTransaction { r ->
+                        r.where(DayEntry::class.java).equalTo("id", dayEntry.id).findAll()
+                            .deleteAllFromRealm()
+                        r.copyToRealm(dayEntry)
+                    }
+                    return@fromAction
+                }
+                //otherwise if the day entry matches but is not the same (ID doesn't match), return
+            } else {
+                if (realm.where(DayEntry::class.java)
+                        .findAll()
+                        .contains(dayEntry)
+                ) return@fromAction
+            }
+            //otherwise save the entry
             realm.use { realm.executeTransaction { r -> r.copyToRealm(dayEntry) } }
         }
     }

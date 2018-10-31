@@ -23,6 +23,7 @@ open class DayEntry (var dayOfTheMonth: Int = 1,
                      var monthOfTheYear: Int = 1,
                      var year: Int = 1990,
                      var mood: String = "UNKNOWN",
+                     var note: String = "",
                      var id: String = UUID.randomUUID().toString()
 ) : RealmObject(), Comparable<DayEntry> {
 
