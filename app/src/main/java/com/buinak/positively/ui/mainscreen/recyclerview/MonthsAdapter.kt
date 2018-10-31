@@ -20,7 +20,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
-import com.buinak.positively.entities.plain.DayEntry
+import com.buinak.positively.entities.DayEntry
 
 class MonthsAdapter(var moods: List<List<DayEntry?>>) : RecyclerView.Adapter<MonthViewHolder>() {
     override fun getItemCount(): Int = moods.size

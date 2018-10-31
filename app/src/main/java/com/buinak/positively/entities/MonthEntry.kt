@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.entities.plain
+package com.buinak.positively.entities
 
-enum class Mood {
-    GOOD,
-    AMAZING,
-    BAD,
-    GREAT,
-    TERRIBLE,
-    THE_WORST,
-}
+class MonthEntry (val dayEntries: List<DayEntry>,
+                  val monthOfTheYear: Month
+)

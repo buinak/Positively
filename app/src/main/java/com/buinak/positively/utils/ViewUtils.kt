@@ -23,6 +23,7 @@ import android.graphics.Rect
 import android.util.TypedValue
 import android.view.View
 import android.view.Window
+import android.widget.EditText
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 
@@ -56,6 +57,19 @@ object ViewUtils {
     }
 
     fun animateTextColourChange(view: TextView, colourTo: Int, duration: Int) {
+        val colourFrom = view.currentTextColor
+        val backgroundColorAnimator = ObjectAnimator.ofObject(
+            view,
+            "textColor",
+            ArgbEvaluator(),
+            colourFrom,
+            colourTo
+        )
+        backgroundColorAnimator.duration = duration.toLong()
+        backgroundColorAnimator.start()
+    }
+
+    fun animateTextColourChange(view: EditText, colourTo: Int, duration: Int) {
         val colourFrom = view.currentTextColor
         val backgroundColorAnimator = ObjectAnimator.ofObject(
             view,

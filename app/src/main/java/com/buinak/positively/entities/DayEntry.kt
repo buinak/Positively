@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.entities.plain
+package com.buinak.positively.entities
 
 import io.realm.RealmObject
 import java.util.*
@@ -53,6 +53,20 @@ open class DayEntry (var dayOfTheMonth: Int = 1,
         result = 31 * result + monthOfTheYear
         result = 31 * result + year
         return result
+    }
+
+    fun getDateString(): String {
+
+        val yearString = year.toString()
+        val monthString: String = when (monthOfTheYear.toString().length) {
+            1 -> if (monthOfTheYear < 9) "0${monthOfTheYear + 1}" else "${monthOfTheYear + 1}"
+            else -> "${monthOfTheYear + 1}"
+        }
+        val dayString: String = when (dayOfTheMonth.toString().length) {
+            1 -> "0$dayOfTheMonth"
+            else -> dayOfTheMonth.toString()
+        }
+        return "$dayString.$monthString.$yearString"
     }
 
 

@@ -20,9 +20,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
-import com.buinak.positively.entities.plain.DayEntry
-import com.buinak.positively.entities.plain.DayOfTheWeek
-import com.buinak.positively.entities.plain.Month
+import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.entities.DayOfTheWeek
+import com.buinak.positively.entities.Month
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

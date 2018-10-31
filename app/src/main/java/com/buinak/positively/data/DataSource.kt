@@ -16,7 +16,7 @@
 
 package com.buinak.positively.data
 
-import com.buinak.positively.entities.plain.DayEntry
+import com.buinak.positively.entities.DayEntry
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single

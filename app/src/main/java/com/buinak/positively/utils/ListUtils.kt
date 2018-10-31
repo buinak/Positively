@@ -16,7 +16,7 @@
 
 package com.buinak.positively.utils
 
-import com.buinak.positively.entities.plain.DayEntry
+import com.buinak.positively.entities.DayEntry
 import java.util.*
 
 object ListUtils {

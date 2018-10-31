@@ -26,7 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
-import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.ViewUtils
 
@@ -73,9 +73,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
             onDayOfTheWeekSelected(dayOfTheWeek.first)
             val dayEntry = dayOfTheWeek.second
-            val dateString =
-                "${dayEntry.dayOfTheMonth}.${dayEntry.monthOfTheYear + 1}.${dayEntry.year}"
-            dateTextView.text = dateString
+            dateTextView.text = dayEntry.getDateString()
             noteEditText.setText(dayEntry.note)
             idTextView.text = "ID = ${dayEntry.id.substring(0..5)}"
         })
@@ -119,29 +117,38 @@ class MainActivity : AppCompatActivity() {
         val selectedTextView: TextView = allDayTextViewMap.toList()
             .first { it.second == dayOfTheWeek }.first
 
+        animateViews(selectedTextView.currentTextColor)
+
+        allDayTextViewMap.keys.forEach { it.text = it.text.substring(0, 1) }
+        selectedTextView.text = allDayTextViewMap[selectedTextView].toString()
+    }
+
+    private fun animateViews(colourTo: Int) {
         ViewUtils.animateTextColourChange(
             dateTextView,
-            selectedTextView.currentTextColor,
+            colourTo,
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
+        )
+        ViewUtils.animateTextColourChange(
+            noteEditText,
+            colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
         ViewUtils.animateTextColourChange(
             howWasYourDayTextView,
-            selectedTextView.currentTextColor,
+            colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
         ViewUtils.animateTextColourChange(
             monthTextView,
-            selectedTextView.currentTextColor,
+            colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
         ViewUtils.animateWindowColourChange(
             window,
-            selectedTextView.currentTextColor,
+            colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
-
-        allDayTextViewMap.keys.forEach { it.text = it.text.substring(0, 1) }
-        selectedTextView.text = allDayTextViewMap[selectedTextView].toString()
     }
 
     private fun fillMapWithTextViews() {

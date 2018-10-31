@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.entities.plain
+package com.buinak.positively.entities
 
-enum class Month {
-    JANUARY,
-    FEBRUARY,
-    MARCH,
-    APRIL,
-    MAY,
-    JUNE,
-    JULY,
-    AUGUST,
-    SEPTEMBER,
-    OCTOBER,
-    NOVEMBER,
-    DECEMBER
+enum class Mood {
+    GOOD,
+    AMAZING,
+    BAD,
+    GREAT,
+    TERRIBLE,
+    THE_WORST,
 }

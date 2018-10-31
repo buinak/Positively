@@ -20,8 +20,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
-import com.buinak.positively.entities.plain.DayEntry
-import com.buinak.positively.entities.plain.Month
+import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.entities.Month
 
 class MonthViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

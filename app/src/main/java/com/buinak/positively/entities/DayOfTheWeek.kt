@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.entities.plain
+package com.buinak.positively.entities
 
-class MonthEntry (val dayEntries: List<DayEntry>,
-                  val monthOfTheYear: Month
-)
+enum class DayOfTheWeek {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}

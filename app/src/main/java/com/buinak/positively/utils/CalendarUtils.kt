@@ -16,7 +16,7 @@
 
 package com.buinak.positively.utils
 
-import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.entities.DayOfTheWeek
 import java.text.SimpleDateFormat
 import java.util.*
 

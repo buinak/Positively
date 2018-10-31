@@ -17,8 +17,8 @@
 package com.buinak.positively.ui.mainscreen
 
 import com.buinak.positively.data.DataSource
-import com.buinak.positively.entities.plain.DayEntry
-import com.buinak.positively.entities.plain.DayOfTheWeek
+import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Observable
 import io.reactivex.Single
