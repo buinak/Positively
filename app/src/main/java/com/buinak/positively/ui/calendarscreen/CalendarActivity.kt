@@ -16,14 +16,12 @@
 
 package com.buinak.positively.ui.calendarscreen
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.buinak.positively.R
+import com.buinak.positively.ui.BaseActivity
 
-class CalendarActivity : AppCompatActivity() {
+class CalendarActivity : BaseActivity() {
+    override fun getContentViewId(): Int = R.layout.activity_calendar
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calendar)
-    }
+    override fun getNavigationMenuItemId(): Int = R.id.navigation_calendar
+
 }

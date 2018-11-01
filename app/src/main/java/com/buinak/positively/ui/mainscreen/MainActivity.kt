@@ -21,18 +21,22 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayOfTheWeek
-import com.buinak.positively.ui.calendarscreen.CalendarActivity
+import com.buinak.positively.ui.BaseActivity
+import com.buinak.positively.ui.settingsscreen.SettingsActivity
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.ViewUtils
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : BaseActivity() {
 
     private lateinit var viewModel: MainViewModel
     private val allDayTextViewMap: HashMap<TextView, DayOfTheWeek> = HashMap()
@@ -45,11 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var arrowRightImageView: ImageView
     private lateinit var arrowLeftImageView: ImageView
-    private lateinit var calendarImageView: ImageView
+    private lateinit var settingsImageButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        finish = false
 
         initialiseViewVariables()
         initialiseClickListeners()
@@ -58,21 +62,16 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
-
             override fun afterTextChanged(p0: Editable?) {
                 viewModel.onNoteTextChanged(p0.toString())
             }
-
         }
         noteEditText.addTextChangedListener(watcher)
-
         viewModel = ViewModelProviders.of(this)
             .get(MainViewModel::class.java)
-
         viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
             onDayOfTheWeekSelected(dayOfTheWeek.first)
             val dayEntry = dayOfTheWeek.second
@@ -80,11 +79,14 @@ class MainActivity : AppCompatActivity() {
             noteEditText.setText(dayEntry.note)
             idTextView.text = "ID = ${dayEntry.id.substring(0..5)}"
         })
-
         viewModel.getCurrentMonth().observe(this, Observer {
             monthTextView.text = it
         })
     }
+
+    override fun getContentViewId(): Int = R.layout.activity_main
+
+    override fun getNavigationMenuItemId(): Int = R.id.navigation_home
 
     private fun initialiseViewVariables() {
         dateTextView = findViewById(R.id.textView_date)
@@ -96,7 +98,8 @@ class MainActivity : AppCompatActivity() {
 
         arrowRightImageView = findViewById(R.id.imageView_arrowRight)
         arrowLeftImageView = findViewById(R.id.imageView_arrowLeft)
-        calendarImageView = findViewById(R.id.imageView_calendar)
+
+        settingsImageButton = findViewById(R.id.imageButton_settings)
     }
 
     private fun initialiseClickListeners() {
@@ -114,13 +117,9 @@ class MainActivity : AppCompatActivity() {
         arrowRightImageView.setOnClickListener { viewModel.onGoRightClicked() }
         arrowLeftImageView.setOnClickListener { viewModel.onGoLeftClicked() }
         dateTextView.setOnClickListener { viewModel.onDayResetToToday() }
-        calendarImageView.setOnClickListener {
-            startActivity(
-                Intent(
-                    this,
-                    CalendarActivity::class.java
-                )
-            )
+        settingsImageButton.setOnClickListener {
+            Observable.timer(100, TimeUnit.MILLISECONDS)
+                .subscribe { startActivity(Intent(this, SettingsActivity::class.java)) }
         }
     }
 
@@ -150,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         ViewUtils.animateImageViewColourChange(
-            calendarImageView,
+            settingsImageButton,
             noteEditText.currentTextColor,
             colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES

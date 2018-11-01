@@ -30,6 +30,6 @@
     <color name="sundayColor">#fbc02d</color>
 
     <color name="greyColor">#757575</color>
-
+    <color name="materialLightGrey">#878787</color>
 
 </resources>
