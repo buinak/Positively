@@ -56,19 +56,16 @@ class MainRepository(val dataSource: DataSource) {
 
     fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
-    fun getToday(): Single<Pair<DayOfTheWeek, DayEntry>> {
+    fun getToday(): Single<DayEntry> {
         currentYear = CalendarUtils.getCurrentYear()
         currentMonth = CalendarUtils.getCurrentMonth()
         currentDay = CalendarUtils.getCurrentDayOfTheMonth()
         currentDayOfTheWeek = CalendarUtils.getCurrentDayOfTheWeek()
         return dataSource.getSpecificDay(currentYear, currentMonth, currentDay)
             .doOnSuccess { lastDayEntry = it }
-            .map { dayEntry ->
-                Pair(currentDayOfTheWeek, dayEntry)
-            }
     }
 
-    fun getSpecificDay(dayOfTheWeek: DayOfTheWeek): Single<Pair<DayOfTheWeek, DayEntry>> {
+    fun getSpecificDay(dayOfTheWeek: DayOfTheWeek): Single<DayEntry> {
         val difference = dayOfTheWeek.ordinal - currentDayOfTheWeek.ordinal
         return getDayWithDifference(difference)
     }
@@ -76,7 +73,7 @@ class MainRepository(val dataSource: DataSource) {
     fun getDayWithDifference(
         difference: Int,
         backwards: Boolean = false
-    ): Single<Pair<DayOfTheWeek, DayEntry>> {
+    ): Single<DayEntry> {
         val calendar = Calendar.getInstance()
         calendar.set(currentYear, currentMonth, currentDay)
         if (backwards) {
@@ -92,9 +89,6 @@ class MainRepository(val dataSource: DataSource) {
 
         return dataSource.getSpecificDay(currentYear, currentMonth, currentDay)
             .doOnSuccess { lastDayEntry = it }
-            .map { dayEntry ->
-                Pair(currentDayOfTheWeek, dayEntry)
-            }
     }
 
     fun onDayEntryNoteChanged(text: String) = noteObservable.onNext(text)

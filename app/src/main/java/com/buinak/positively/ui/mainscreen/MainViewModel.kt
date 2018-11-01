@@ -31,7 +31,7 @@ class MainViewModel : ViewModel() {
 
     @Inject
     lateinit var repository: MainRepository
-    private val currentSelectedDay: MutableLiveData<Pair<DayOfTheWeek, DayEntry>> =
+    private val currentSelectedDay: MutableLiveData<DayEntry> =
         MutableLiveData()
     private val currentMonth: MutableLiveData<String> = MutableLiveData()
     private val disposable: CompositeDisposable = CompositeDisposable()
@@ -42,7 +42,7 @@ class MainViewModel : ViewModel() {
         requestRepositoryDayAndSubscribe()
     }
 
-    fun getCurrentlySelectedDay(): LiveData<Pair<DayOfTheWeek, DayEntry>> = currentSelectedDay
+    fun getCurrentlySelectedDay(): LiveData<DayEntry> = currentSelectedDay
     fun getCurrentMonth(): LiveData<String> = currentMonth
 
     fun onDayResetToToday() = requestRepositoryDayAndSubscribe()
@@ -56,7 +56,7 @@ class MainViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
-                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+                currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
             })
     }
 
@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
-                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+                currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
             })
     }
 
@@ -74,7 +74,7 @@ class MainViewModel : ViewModel() {
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
-                currentMonth.postValue(Month.values()[it.second.monthOfTheYear].toString())
+                currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
             })
     }
 

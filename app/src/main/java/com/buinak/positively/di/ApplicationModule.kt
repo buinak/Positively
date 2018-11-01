@@ -18,6 +18,7 @@ package com.buinak.positively.di
 
 import com.buinak.positively.data.DataModule
 import com.buinak.positively.data.DataSource
+import com.buinak.positively.ui.calendarscreen.CalendarRepository
 import com.buinak.positively.ui.mainscreen.MainRepository
 import dagger.Module
 import dagger.Provides
@@ -29,4 +30,8 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideMainRepository(dataSource: DataSource) = MainRepository(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideCalendarRepository(dataSource: DataSource) = CalendarRepository(dataSource)
 }

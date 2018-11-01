@@ -19,6 +19,7 @@ package com.buinak.positively.application
 import android.app.Application
 import com.buinak.positively.di.ApplicationComponent
 import com.buinak.positively.di.DaggerApplicationComponent
+import com.buinak.positively.ui.calendarscreen.CalendarViewModel
 import com.buinak.positively.ui.mainscreen.MainViewModel
 import io.realm.Realm
 
@@ -36,6 +37,8 @@ class PositivelyApplication: Application() {
         private lateinit var applicationComponent: ApplicationComponent
 
         fun inject(mainViewModel: MainViewModel) = applicationComponent.inject(mainViewModel)
+        fun inject(calendarViewModel: CalendarViewModel) =
+            applicationComponent.inject(calendarViewModel)
     }
 
 }

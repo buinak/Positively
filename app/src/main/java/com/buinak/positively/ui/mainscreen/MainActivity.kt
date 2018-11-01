@@ -72,12 +72,11 @@ class MainActivity : BaseActivity() {
         noteEditText.addTextChangedListener(watcher)
         viewModel = ViewModelProviders.of(this)
             .get(MainViewModel::class.java)
-        viewModel.getCurrentlySelectedDay().observe(this, Observer { dayOfTheWeek ->
-            onDayOfTheWeekSelected(dayOfTheWeek.first)
-            val dayEntry = dayOfTheWeek.second
-            dateTextView.text = dayEntry.getDateString()
-            noteEditText.setText(dayEntry.note)
-            idTextView.text = "ID = ${dayEntry.id.substring(0..5)}"
+        viewModel.getCurrentlySelectedDay().observe(this, Observer { selectedDay ->
+            onDayOfTheWeekSelected(DayOfTheWeek.valueOf(selectedDay.dayOfTheWeek))
+            dateTextView.text = selectedDay.getDateString()
+            noteEditText.setText(selectedDay.note)
+            idTextView.text = "ID = ${selectedDay.id.substring(0..5)}"
         })
         viewModel.getCurrentMonth().observe(this, Observer {
             monthTextView.text = it

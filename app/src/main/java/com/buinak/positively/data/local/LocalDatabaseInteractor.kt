@@ -17,11 +17,13 @@
 package com.buinak.positively.data.local
 
 import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 import io.realm.Realm
+import java.util.*
 
 class LocalDatabaseInteractor {
 
@@ -63,6 +65,11 @@ class LocalDatabaseInteractor {
             return when (result) {
                 null -> {
                     val newDay = DayEntry(day, month, year)
+                    val calendar = Calendar.getInstance()
+                    calendar.set(Calendar.YEAR, year)
+                    calendar.set(Calendar.MONTH, month)
+                    calendar.set(Calendar.DAY_OF_MONTH, day)
+                    newDay.dayOfTheWeek = CalendarUtils.getSpecificDayOfTheWeek(calendar).toString()
                     realm.executeTransaction { r -> r.copyToRealm(newDay) }
                     Single.just(newDay)
                 }

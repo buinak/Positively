@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package com.buinak.positively.di
+package com.buinak.positively.ui.calendarscreen
 
-import com.buinak.positively.application.ContextModule
-import com.buinak.positively.ui.calendarscreen.CalendarViewModel
-import com.buinak.positively.ui.mainscreen.MainViewModel
-import dagger.Component
-import javax.inject.Singleton
-
-@Component(modules = arrayOf(ApplicationModule::class, ContextModule::class))
-@Singleton
-interface ApplicationComponent {
-    fun inject(mainViewModel: MainViewModel)
-    fun inject(calendarViewModel: CalendarViewModel)
-}
+class CalendarEntry(
+    val year: Int,
+    val monthOfTheYear: Int,
+    val dayOfTheMonth: Int,
+    val hasEntries: Boolean
+)
