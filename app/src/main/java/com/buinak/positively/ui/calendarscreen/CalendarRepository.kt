@@ -29,9 +29,10 @@ import kotlin.collections.ArrayList
 class CalendarRepository(val dataSource: DataSource) {
     //total amount of days = N * 7, where N = the amount of weeks
     private val TOTAL = 5 * 7
+    private val calendar = Calendar.getInstance()
 
     fun getCurrentFiveWeeks(): Single<List<DayEntry>> {
-        val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
+        val currentMonth = calendar.get(Calendar.MONTH)
         val acceptableMonths = when (currentMonth) {
             11 -> listOf(10, 11, 0)
             0 -> listOf(11, 0, 1)
@@ -42,38 +43,49 @@ class CalendarRepository(val dataSource: DataSource) {
                 .map { list -> list.filter { entry -> acceptableMonths.contains(entry.monthOfTheYear) } }
                 .zipWith(getListOfEmptyDayEntries().toObservable(),
                     BiFunction<List<DayEntry>, ArrayList<DayEntry>, ArrayList<DayEntry>> { savedEntriesList, emptyEntriesList ->
-                        for (savedEntry in savedEntriesList) {
-                            val index = emptyEntriesList.indexOfFirst { it.equals(savedEntry) }
-                            emptyEntriesList[index] = savedEntry
-                        }
-                        return@BiFunction emptyEntriesList
+                        return@BiFunction filterLists(savedEntriesList, emptyEntriesList)
                     })
         )
     }
 
+    private fun filterLists(
+        savedEntriesList: List<DayEntry>,
+        emptyEntriesList: ArrayList<DayEntry>
+    ): ArrayList<DayEntry> {
+        for (savedEntry in savedEntriesList) {
+            val index = emptyEntriesList.indexOfFirst { it == savedEntry }
+            if (index != -1) {
+                emptyEntriesList[index] = savedEntry
+            }
+        }
+        return emptyEntriesList
+    }
+
     private fun getListOfEmptyDayEntries(): Single<ArrayList<DayEntry>> {
         val resultList = ArrayList<DayEntry>()
-        val currentYear = CalendarUtils.getCurrentYear()
-        val currentMonth = CalendarUtils.getCurrentMonth()
-        var calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        var newCalendar = Calendar.getInstance()
 
         //FILL WITH MISSING FROM THE BEGINNING OF THE WEEK
-        calendar.set(currentYear, currentMonth, 1)
-        while (CalendarUtils.getSpecificDayOfTheWeek(calendar) != DayOfTheWeek.MONDAY) {
-            calendar.add(Calendar.DATE, -1)
+        newCalendar.set(currentYear, currentMonth, 1)
+        while (CalendarUtils.getSpecificDayOfTheWeek(newCalendar) != DayOfTheWeek.MONDAY) {
+            newCalendar.add(Calendar.DATE, -1)
         }
 
         for (i in 1..TOTAL) {
             val dayEntry = DayEntry(
-                calendar.get(Calendar.DAY_OF_MONTH),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.YEAR)
+                newCalendar.get(Calendar.DAY_OF_MONTH),
+                newCalendar.get(Calendar.MONTH),
+                newCalendar.get(Calendar.YEAR)
             )
             dayEntry.dayOfTheWeek = DayOfTheWeek.values()[(i - 1) % 7].toString()
             resultList.add(dayEntry)
-            calendar.add(Calendar.DATE, 1)
+            newCalendar.add(Calendar.DATE, 1)
         }
 
         return Single.just(resultList)
     }
+
+    fun goOneMonthAhead() = calendar.add(Calendar.MONTH, 1)
 }

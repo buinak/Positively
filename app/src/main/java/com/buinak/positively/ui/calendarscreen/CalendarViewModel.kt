@@ -29,15 +29,37 @@ class CalendarViewModel : ViewModel() {
     @Inject
     lateinit var repository: CalendarRepository
 
-    private val weeksForTheSelectedMonth = MutableLiveData<List<DayEntry>>()
+    private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
 
 
     init {
         PositivelyApplication.inject(this)
+        getCurrentFiveWeeks()
+    }
+
+    private fun getCurrentFiveWeeks() {
         val disposable = repository.getCurrentFiveWeeks()
             .subscribeOn(Schedulers.io())
+            .map { list ->
+                val resultList = ArrayList<List<DayEntry>>()
+                var currentList = ArrayList<DayEntry>()
+                for (i in 0 until list.size) {
+                    currentList.add(list[i])
+                    if (i != 0) {
+                        if ((i + 1) % 7 == 0 || i == list.size - 1) {
+                            resultList.add(currentList)
+                            currentList = ArrayList()
+                        }
+                    }
+                }
+                return@map resultList
+            }
             .subscribe { it -> weeksForTheSelectedMonth.postValue(it) }
     }
 
-    fun getDaysLiveData(): LiveData<List<DayEntry>> = weeksForTheSelectedMonth
+    fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
+    fun goOneMonthAhead() {
+        repository.goOneMonthAhead()
+        getCurrentFiveWeeks()
+    }
 }
