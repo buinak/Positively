@@ -24,6 +24,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.Window
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 
@@ -100,6 +101,23 @@ object ViewUtils {
         val backgroundColorAnimator = ObjectAnimator.ofObject(
             view,
             "cardBackgroundColor",
+            ArgbEvaluator(),
+            colourFrom,
+            colourTo
+        )
+        backgroundColorAnimator.duration = duration.toLong()
+        backgroundColorAnimator.start()
+    }
+
+    fun animateImageViewColourChange(
+        view: ImageView,
+        colourFrom: Int,
+        colourTo: Int,
+        duration: Int
+    ) {
+        val backgroundColorAnimator = ObjectAnimator.ofObject(
+            view,
+            "colorFilter",
             ArgbEvaluator(),
             colourFrom,
             colourTo

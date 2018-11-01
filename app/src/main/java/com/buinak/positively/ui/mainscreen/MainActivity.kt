@@ -16,6 +16,7 @@
 
 package com.buinak.positively.ui.mainscreen
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,6 +28,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayOfTheWeek
+import com.buinak.positively.ui.calendarscreen.CalendarActivity
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.ViewUtils
 
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var arrowRightImageView: ImageView
     private lateinit var arrowLeftImageView: ImageView
+    private lateinit var calendarImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         arrowRightImageView = findViewById(R.id.imageView_arrowRight)
         arrowLeftImageView = findViewById(R.id.imageView_arrowLeft)
+        calendarImageView = findViewById(R.id.imageView_calendar)
     }
 
     private fun initialiseClickListeners() {
@@ -110,6 +114,14 @@ class MainActivity : AppCompatActivity() {
         arrowRightImageView.setOnClickListener { viewModel.onGoRightClicked() }
         arrowLeftImageView.setOnClickListener { viewModel.onGoLeftClicked() }
         dateTextView.setOnClickListener { viewModel.onDayResetToToday() }
+        calendarImageView.setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    CalendarActivity::class.java
+                )
+            )
+        }
     }
 
 
@@ -133,6 +145,13 @@ class MainActivity : AppCompatActivity() {
         )
         ViewUtils.animateTextHintColourChange(
             noteEditText,
+            colourTo,
+            Constants.ANIMATION_DURATION_COLOR_CHANGES
+        )
+
+        ViewUtils.animateImageViewColourChange(
+            calendarImageView,
+            noteEditText.currentTextColor,
             colourTo,
             Constants.ANIMATION_DURATION_COLOR_CHANGES
         )
