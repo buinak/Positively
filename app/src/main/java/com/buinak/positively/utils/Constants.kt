@@ -18,4 +18,5 @@ package com.buinak.positively.utils
 
 object Constants {
     const val ANIMATION_DURATION_COLOR_CHANGES = 300
+    const val DELAY: Long = 0
 }

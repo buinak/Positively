@@ -117,7 +117,7 @@ class MainActivity : BaseActivity() {
         arrowLeftImageView.setOnClickListener { viewModel.onGoLeftClicked() }
         dateTextView.setOnClickListener { viewModel.onDayResetToToday() }
         settingsImageButton.setOnClickListener {
-            Observable.timer(100, TimeUnit.MILLISECONDS)
+            Observable.timer(Constants.DELAY, TimeUnit.MILLISECONDS)
                 .subscribe { startActivity(Intent(this, SettingsActivity::class.java)) }
         }
     }

@@ -20,6 +20,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
+kapt {
+    correctErrorTypes = true
+}
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -68,6 +71,10 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
+
+    implementation 'com.airbnb.android:epoxy:3.0.0-rc1'
+    // Add the annotation processor if you are using Epoxy's annotations (recommended)
+    kapt 'com.airbnb.android:epoxy-processor:3.0.0-rc1'
 }
 repositories {
     mavenCentral()

@@ -16,6 +16,7 @@
 
 package com.buinak.positively.ui.calendarscreen.recyclerview
 
+import android.graphics.Typeface
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -39,15 +40,43 @@ class WeekViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 1 -> "0${day.dayOfTheMonth}"
                 else -> "${day.dayOfTheMonth}"
             }
+            val textView: TextView
+            val colour: Int
             when (valueOf(day.dayOfTheWeek)) {
-                MONDAY -> textViewMonday.text = date
-                TUESDAY -> textViewTuesday.text = date
-                WEDNESDAY -> textViewWednesday.text = date
-                THURSDAY -> textViewThursday.text = date
-                FRIDAY -> textViewFriday.text = date
-                SATURDAY -> textViewSaturday.text = date
-                SUNDAY -> textViewSunday.text = date
+                MONDAY -> {
+                    textView = textViewMonday
+                    colour = textView.resources.getColor(R.color.mondayColor)
+                }
+                TUESDAY -> {
+                    textView = textViewTuesday
+                    colour = textView.resources.getColor(R.color.tuesdayColor)
+                }
+                WEDNESDAY -> {
+                    textView = textViewWednesday
+                    colour = textView.resources.getColor(R.color.wednesdayColor)
+                }
+                THURSDAY -> {
+                    textView = textViewThursday
+                    colour = textView.resources.getColor(R.color.thursdayColor)
+                }
+                FRIDAY -> {
+                    textView = textViewFriday
+                    colour = textView.resources.getColor(R.color.fridayColor)
+                }
+                SATURDAY -> {
+                    textView = textViewSaturday
+                    colour = textView.resources.getColor(R.color.saturdayColor)
+                }
+                SUNDAY -> {
+                    textView = textViewSunday
+                    colour = textView.resources.getColor(R.color.sundayColor)
+                }
             }
+            if (day.note.isNotEmpty()) {
+                textView.setTextColor(colour)
+                textView.setTypeface(null, Typeface.BOLD)
+            }
+            textView.text = date
         }
     }
 }

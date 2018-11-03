@@ -22,6 +22,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.buinak.positively.R
 import com.buinak.positively.ui.calendarscreen.CalendarActivity
+import com.buinak.positively.utils.Constants.DELAY
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 abstract class BaseActivity : AppCompatActivity(),
@@ -29,7 +30,6 @@ abstract class BaseActivity : AppCompatActivity(),
 
     protected lateinit var navigationView: BottomNavigationView
     protected var finish: Boolean = true
-    private val DELAY: Long = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
