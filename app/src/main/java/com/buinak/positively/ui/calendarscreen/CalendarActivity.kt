@@ -41,13 +41,9 @@ class CalendarActivity : BaseActivity() {
 
         viewModel = ViewModelProviders.of(this).get(CalendarViewModel::class.java)
         viewModel.getDaysLiveData().observe(this, Observer {
-
             controller.setData(it)
         })
         findViewById<Button>(R.id.button_oneMonthAhead).setOnClickListener { viewModel.goOneMonthAhead() }
-        findViewById<Button>(R.id.button_calendar_oneYearAhead).setOnClickListener { for (i in 1..12) viewModel.goOneMonthAhead() }
-        findViewById<Button>(R.id.button_add10Years).setOnClickListener { for (i in 1..12 * 10) viewModel.goOneMonthAhead() }
-        findViewById<Button>(R.id.button_add100Years).setOnClickListener { for (i in 1..12 * 100) viewModel.goOneMonthAhead() }
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar

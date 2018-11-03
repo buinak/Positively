@@ -40,6 +40,7 @@ class CalendarController : TypedEpoxyController<List<List<DayEntry>>>() {
         for (list in data) {
             WeekModel_()
                 .id(++lastId)
+                .primaryMonth(data[3][1].monthOfTheYear)
                 .contents(list)
                 .addTo(this)
         }

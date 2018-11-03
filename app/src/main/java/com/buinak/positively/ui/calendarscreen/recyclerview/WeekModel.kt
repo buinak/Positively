@@ -32,13 +32,21 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
     @EpoxyAttribute
     lateinit var contents: List<DayEntry>
 
-    override fun bind(holder: DateHolder) {
+    @EpoxyAttribute
+    var primaryMonth: Int = 0
+
+    var defaultTextColor: Int = 0
+
+    override fun bind(holder: WeekModel.DateHolder) {
+        if (defaultTextColor == 0) {
+            defaultTextColor = holder.textViews[0].currentTextColor
+        }
         for (i in 0 until contents.size) {
             val entry = contents[i]
             val textView = holder.textViews[i]
             textView.text = entry.dayOfTheMonth.toString()
             if (entry.note.isNotEmpty()) {
-                holder.textViews[i].setTextColor(
+                textView.setTextColor(
                     when (DayOfTheWeek.valueOf(entry.dayOfTheWeek)) {
                         DayOfTheWeek.MONDAY -> textView.resources.getColor(R.color.mondayColor)
                         DayOfTheWeek.TUESDAY -> textView.resources.getColor(R.color.tuesdayColor)
@@ -49,6 +57,12 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                         DayOfTheWeek.SUNDAY -> textView.resources.getColor(R.color.sundayColor)
                     }
                 )
+            } else {
+                textView.setTextColor(defaultTextColor)
+            }
+            textView.alpha = when (entry.monthOfTheYear) {
+                primaryMonth -> 1F
+                else -> 0.35F
             }
         }
     }
