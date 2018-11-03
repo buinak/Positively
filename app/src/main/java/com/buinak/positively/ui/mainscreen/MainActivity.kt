@@ -69,6 +69,7 @@ class MainActivity : BaseActivity() {
                 viewModel.onNoteTextChanged(p0.toString())
             }
         }
+
         noteEditText.addTextChangedListener(watcher)
         viewModel = ViewModelProviders.of(this)
             .get(MainViewModel::class.java)

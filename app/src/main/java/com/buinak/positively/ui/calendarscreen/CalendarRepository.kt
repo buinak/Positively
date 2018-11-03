@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 class CalendarRepository(val dataSource: DataSource) {
     //total amount of days = N * 7, where N = the amount of weeks
     private val TOTAL = 5 * 7
-    private val calendar = Calendar.getInstance()
+    private var calendar = Calendar.getInstance()
 
     fun getCurrentFiveWeeks(): Single<List<DayEntry>> {
         val currentMonth = calendar.get(Calendar.MONTH)
@@ -46,6 +46,10 @@ class CalendarRepository(val dataSource: DataSource) {
                         return@BiFunction filterLists(savedEntriesList, emptyEntriesList)
                     })
         )
+    }
+
+    fun resetToCurrent() {
+        calendar = Calendar.getInstance()
     }
 
     private fun filterLists(

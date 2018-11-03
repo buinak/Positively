@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -28,6 +29,8 @@ class CalendarViewModel : ViewModel() {
 
     @Inject
     lateinit var repository: CalendarRepository
+
+    val disposable = CompositeDisposable()
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
 
@@ -38,7 +41,7 @@ class CalendarViewModel : ViewModel() {
     }
 
     private fun getCurrentFiveWeeks() {
-        val disposable = repository.getCurrentFiveWeeks()
+        disposable.add(repository.getCurrentFiveWeeks()
             .subscribeOn(Schedulers.io())
             .map { list ->
                 val resultList = ArrayList<List<DayEntry>>()
@@ -54,12 +57,21 @@ class CalendarViewModel : ViewModel() {
                 }
                 return@map resultList
             }
-            .subscribe { it -> weeksForTheSelectedMonth.postValue(it) }
+            .subscribe { it -> weeksForTheSelectedMonth.postValue(it) })
     }
 
     fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
+
     fun goOneMonthAhead() {
         repository.goOneMonthAhead()
+        getCurrentFiveWeeks()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.dispose()
+
+        repository.resetToCurrent()
         getCurrentFiveWeeks()
     }
 }

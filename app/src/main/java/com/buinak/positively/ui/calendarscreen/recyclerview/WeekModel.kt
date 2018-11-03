@@ -35,12 +35,10 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
     @EpoxyAttribute
     var primaryMonth: Int = 0
 
-    var defaultTextColor: Int = 0
+    //default grey for text views
+    var defaultTextColor: Int = -1979711488
 
     override fun bind(holder: WeekModel.DateHolder) {
-        if (defaultTextColor == 0) {
-            defaultTextColor = holder.textViews[0].currentTextColor
-        }
         for (i in 0 until contents.size) {
             val entry = contents[i]
             val textView = holder.textViews[i]
