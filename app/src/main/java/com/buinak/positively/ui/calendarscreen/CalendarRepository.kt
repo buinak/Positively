@@ -20,8 +20,9 @@ import com.buinak.positively.data.DataSource
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.CalendarUtils
+import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
+import io.reactivex.subjects.PublishSubject
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,21 +32,25 @@ class CalendarRepository(val dataSource: DataSource) {
     private val TOTAL = 5 * 7
     private var calendar = Calendar.getInstance()
 
-    fun getCurrentFiveWeeks(): Single<List<DayEntry>> {
+    fun getCurrentFiveWeeks(): Observable<List<DayEntry>> {
+        val subject: PublishSubject<List<DayEntry>> = PublishSubject.create()
+
         val currentMonth = calendar.get(Calendar.MONTH)
         val acceptableMonths = when (currentMonth) {
             11 -> listOf(10, 11, 0)
             0 -> listOf(11, 0, 1)
             else -> listOf(currentMonth - 1, currentMonth, currentMonth + 1)
         }
-        return Single.fromObservable(
-            dataSource.getAllDays()
-                .map { list -> list.filter { entry -> acceptableMonths.contains(entry.monthOfTheYear) } }
-                .zipWith(getListOfEmptyDayEntries().toObservable(),
-                    BiFunction<List<DayEntry>, ArrayList<DayEntry>, ArrayList<DayEntry>> { savedEntriesList, emptyEntriesList ->
-                        return@BiFunction filterLists(savedEntriesList, emptyEntriesList)
-                    })
-        )
+        val disposable = dataSource.getAllDays()
+            .map { list -> list.filter { entry -> acceptableMonths.contains(entry.monthOfTheYear) } }
+            .subscribe { savedEntriesList ->
+                getListOfEmptyDayEntries().subscribe { emptyEntriesList ->
+                    subject.onNext(filterLists(savedEntriesList, emptyEntriesList))
+                }
+            }
+
+
+        return subject
     }
 
     fun resetToCurrent() {
