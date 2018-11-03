@@ -21,13 +21,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_monday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_tuesday"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -35,126 +37,128 @@
             android:id="@+id/textView_calendar_monday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
+    </FrameLayout>
 
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_tuesday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_wednesday"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView_calendar_monday"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_monday">
 
         <TextView
             android:id="@+id/textView_calendar_tuesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_sunday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/cardView_calendar_saturday"
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_saturday">
 
         <TextView
             android:id="@+id/textView_calendar_sunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_thursday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_friday"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView_calendar_wednesday"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_wednesday">
 
         <TextView
             android:id="@+id/textView_calendar_thursday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_saturday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_sunday"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView_calendar_friday"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_friday">
 
         <TextView
             android:id="@+id/textView_calendar_saturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_friday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_saturday"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView_calendar_thursday"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_thursday">
 
         <TextView
             android:id="@+id/textView_calendar_friday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/cardView_calendar_wednesday"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cardView_calendar_thursday"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/cardView_calendar_tuesday"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cardView_calendar_tuesday">
 
         <TextView
             android:id="@+id/textView_calendar_wednesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_margin="4dp"
             android:text="1"
             android:textSize="25sp" />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
