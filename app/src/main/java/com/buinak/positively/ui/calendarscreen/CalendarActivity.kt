@@ -17,7 +17,7 @@
 package com.buinak.positively.ui.calendarscreen
 
 import android.os.Bundle
-import android.widget.Button
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +29,13 @@ import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 class CalendarActivity : BaseActivity() {
     private lateinit var viewModel: CalendarViewModel
 
-    private lateinit var recyclerView: RecyclerView
+    private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
+    private val dateTextView: TextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
 
     val controller = CalendarController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        recyclerView = findViewById(R.id.recyclerView_calendar)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = controller.adapter
 
@@ -43,7 +43,8 @@ class CalendarActivity : BaseActivity() {
         viewModel.getDaysLiveData().observe(this, Observer {
             controller.setData(it)
         })
-        findViewById<Button>(R.id.button_oneMonthAhead).setOnClickListener { viewModel.goOneMonthAhead() }
+        viewModel.getCurrentCalendarDateLiveData()
+            .observe(this, Observer { dateTextView.text = it })
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar

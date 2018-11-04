@@ -97,4 +97,7 @@ class CalendarRepository(val dataSource: DataSource) {
     }
 
     fun goOneMonthAhead() = calendar.add(Calendar.MONTH, 1)
+
+    fun getCurrentMonth() = calendar.get(Calendar.MONTH)
+    fun getCurrentYear() = calendar.get(Calendar.YEAR)
 }
