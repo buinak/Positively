@@ -61,10 +61,9 @@ class CalendarViewModel : ViewModel() {
             }
             .subscribe { it ->
                 weeksForTheSelectedMonth.postValue(it)
-                val dateString = "${Month.values()[repository.getCurrentMonth()]
-                    .toString()
-                    .toLowerCase()
-                    .capitalize()}, ${repository.getCurrentYear()}"
+                val dateString = "${Month.values()[repository.getCurrentMonth()]}"
+//                    .toLowerCase()
+//                    .capitalize()}, ${repository.getCurrentYear()}"
                 currentCalendarDate.postValue(dateString)
             })
     }

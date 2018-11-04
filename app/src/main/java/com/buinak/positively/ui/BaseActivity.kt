@@ -53,15 +53,21 @@ abstract class BaseActivity : AppCompatActivity(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navigationView.postDelayed({
             val itemId = item.itemId
+            var sameActivity: Boolean = false
             when (itemId) {
-                R.id.navigation_calendar -> startActivity(
-                    Intent(
-                        this,
-                        CalendarActivity::class.java
-                    )
-                )
+                R.id.navigation_calendar -> {
+                    if (this is CalendarActivity) sameActivity = true
+                    else {
+                        startActivity(
+                            Intent(
+                                this,
+                                CalendarActivity::class.java
+                            )
+                        )
+                    }
+                }
             }
-            if (finish) finish()
+            if (finish && !sameActivity) finish()
         }, DELAY)
         return true
     }
