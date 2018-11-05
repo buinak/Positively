@@ -76,6 +76,11 @@ class CalendarViewModel : ViewModel() {
         getCurrentFiveWeeks()
     }
 
+    fun resetDate() {
+        repository.resetToCurrent()
+        getCurrentFiveWeeks()
+    }
+
     override fun onCleared() {
         super.onCleared()
         disposable.dispose()

@@ -56,6 +56,7 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
         for (i in 0 until contents.size) {
             val entry = contents[i]
             val textView = holder.textViews[i]
+            initialiseTextView(textView, entry)
 
             (textView.parent as FrameLayout).setOnClickListener {
                 val date = textView.text.toString().toInt()
@@ -65,7 +66,6 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                 }
                 updateSubject.onNext(DayEntry(date, month))
             }
-
             disposable = updateSubject.subscribe { date ->
                 holder.textViews.forEach {
                     it.setTypeface(null, Typeface.NORMAL)
@@ -74,20 +74,20 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                         defaultTextSizeInSp
                     )
                 }
-                if (date.monthOfTheYear == primaryMonth) {
-                    val index = contents.indexOfFirst { it.dayOfTheMonth == date.dayOfTheMonth }
-                    val selectedTextView = holder.textViews.getOrNull(index)
-                    if (selectedTextView?.alpha == 1F) {
-                        selectedTextView.setTypeface(null, Typeface.BOLD)
-                        selectedTextView.setTextSize(
-                            TypedValue.COMPLEX_UNIT_SP,
-                            selectedTextSizeInSp
-                        )
+
+                //if the selected date belongs to this week model
+                if (date.monthOfTheYear == primaryMonth || date.monthOfTheYear == secondaryMonth) {
+                    //assign opacity to later check if the textview is correct
+                    //for instance, if the date's month is the same as the primary month
+                    //we need to make sure that the text view belongs to the primary month
+                    val opacity: Float = when (date.monthOfTheYear) {
+                        primaryMonth -> 1F
+                        else -> 0.35F
                     }
-                } else if (date.monthOfTheYear == secondaryMonth) {
+
                     val index = contents.indexOfFirst { it.dayOfTheMonth == date.dayOfTheMonth }
                     val selectedTextView = holder.textViews.getOrNull(index)
-                    if (selectedTextView?.alpha == 0.35F) {
+                    if (selectedTextView?.alpha == opacity) {
                         selectedTextView.setTypeface(null, Typeface.BOLD)
                         selectedTextView.setTextSize(
                             TypedValue.COMPLEX_UNIT_SP,
@@ -96,34 +96,42 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                     }
                 }
             }
-
-            textView.text = entry.dayOfTheMonth.toString()
-            if (entry.note.isNotEmpty()) {
-                textView.setTextColor(
-                    when (DayOfTheWeek.valueOf(entry.dayOfTheWeek)) {
-                        DayOfTheWeek.MONDAY -> textView.resources.getColor(R.color.mondayColor)
-                        DayOfTheWeek.TUESDAY -> textView.resources.getColor(R.color.tuesdayColor)
-                        DayOfTheWeek.WEDNESDAY -> textView.resources.getColor(R.color.wednesdayColor)
-                        DayOfTheWeek.THURSDAY -> textView.resources.getColor(R.color.thursdayColor)
-                        DayOfTheWeek.FRIDAY -> textView.resources.getColor(R.color.fridayColor)
-                        DayOfTheWeek.SATURDAY -> textView.resources.getColor(R.color.saturdayColor)
-                        DayOfTheWeek.SUNDAY -> textView.resources.getColor(R.color.sundayColor)
-                    }
-                )
-            } else {
-                textView.setTextColor(Constants.DEFAULT_TEXT_GREY_COLOUR)
-            }
-            textView.alpha = when (entry.monthOfTheYear) {
-                primaryMonth -> 1F
-                else -> 0.35F
-            }
         }
+    }
+
+    private fun initialiseTextView(
+        textView: TextView,
+        entry: DayEntry
+    ) {
+        textView.text = entry.dayOfTheMonth.toString()
+        if (entry.note.isNotEmpty()) {
+            textView.setTextColor(
+                when (DayOfTheWeek.valueOf(entry.dayOfTheWeek)) {
+                    DayOfTheWeek.MONDAY -> textView.resources.getColor(R.color.mondayColor)
+                    DayOfTheWeek.TUESDAY -> textView.resources.getColor(R.color.tuesdayColor)
+                    DayOfTheWeek.WEDNESDAY -> textView.resources.getColor(R.color.wednesdayColor)
+                    DayOfTheWeek.THURSDAY -> textView.resources.getColor(R.color.thursdayColor)
+                    DayOfTheWeek.FRIDAY -> textView.resources.getColor(R.color.fridayColor)
+                    DayOfTheWeek.SATURDAY -> textView.resources.getColor(R.color.saturdayColor)
+                    DayOfTheWeek.SUNDAY -> textView.resources.getColor(R.color.sundayColor)
+                }
+            )
+        } else {
+            textView.setTextColor(Constants.DEFAULT_TEXT_GREY_COLOUR)
+        }
+        textView.alpha = when (entry.monthOfTheYear) {
+            primaryMonth -> 1F
+            else -> 0.35F
+        }
+        textView.setTypeface(null, Typeface.NORMAL)
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, defaultTextSizeInSp)
     }
 
     override fun unbind(holder: DateHolder) {
         super.unbind(holder)
         disposable?.dispose()
     }
+
 
     inner class DateHolder : EpoxyHolder() {
         var textViews: ArrayList<TextView> = ArrayList()

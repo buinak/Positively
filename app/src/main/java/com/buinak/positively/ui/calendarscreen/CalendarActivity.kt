@@ -17,6 +17,7 @@
 package com.buinak.positively.ui.calendarscreen
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -55,7 +56,8 @@ class CalendarActivity : BaseActivity() {
         })
         viewModel.getCurrentCalendarDateLiveData()
             .observe(this, Observer { dateTextView.text = it })
-
+        findViewById<Button>(R.id.button).setOnClickListener { viewModel.goOneMonthAhead() }
+        findViewById<Button>(R.id.button2).setOnClickListener { viewModel.resetDate() }
 
     }
 
