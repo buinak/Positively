@@ -18,6 +18,7 @@ package com.buinak.positively.ui.mainscreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -27,6 +28,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
+import com.buinak.positively.ui.calendarscreen.CalendarActivity
 import com.buinak.positively.ui.settingsscreen.SettingsActivity
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.RxUtils
@@ -42,13 +44,14 @@ class MainActivity : BaseActivity() {
 
     private lateinit var dateTextView: TextView
     private lateinit var monthTextView: TextView
-    private lateinit var idTextView: TextView
     private lateinit var howWasYourDayTextView: TextView
     private lateinit var noteEditText: EditText
 
     private lateinit var arrowRightImageView: ImageView
     private lateinit var arrowLeftImageView: ImageView
     private lateinit var settingsImageButton: ImageButton
+
+    private var currentColour: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +68,6 @@ class MainActivity : BaseActivity() {
             onDayOfTheWeekSelected(DayOfTheWeek.valueOf(selectedDay.dayOfTheWeek))
             dateTextView.text = selectedDay.getDateString()
             noteEditText.setText(selectedDay.note)
-            idTextView.text = "ID = ${selectedDay.id.substring(0..5)}"
         })
         viewModel.getCurrentMonth().observe(this, Observer {
             monthTextView.text = it
@@ -79,7 +81,6 @@ class MainActivity : BaseActivity() {
     private fun initialiseViewVariables() {
         dateTextView = findViewById(R.id.textView_date)
         monthTextView = findViewById(R.id.textView_month)
-        idTextView = findViewById(R.id.textView_id)
         howWasYourDayTextView = findViewById(R.id.textView_howWasYourDay)
 
         noteEditText = findViewById(R.id.editText_note)
@@ -106,7 +107,7 @@ class MainActivity : BaseActivity() {
         arrowLeftImageView.setOnClickListener { viewModel.onGoLeftClicked() }
         dateTextView.setOnClickListener { viewModel.onDayResetToToday() }
         settingsImageButton.setOnClickListener {
-            Observable.timer(Constants.DELAY, TimeUnit.MILLISECONDS)
+            Observable.timer(Constants.ANY_ACTIVITY_START_DELAY, TimeUnit.MILLISECONDS)
                 .subscribe { startActivity(Intent(this, SettingsActivity::class.java)) }
         }
     }
@@ -116,7 +117,8 @@ class MainActivity : BaseActivity() {
         val selectedTextView: TextView = allDayTextViewMap.toList()
             .first { it.second == dayOfTheWeek }.first
 
-        animateViews(selectedTextView.currentTextColor)
+        currentColour = selectedTextView.currentTextColor
+        animateViews()
 
         allDayTextViewMap.keys.forEach { it ->
             it.text = it.text.substring(0, 1)
@@ -124,44 +126,43 @@ class MainActivity : BaseActivity() {
         selectedTextView.text = allDayTextViewMap[selectedTextView].toString()
     }
 
-    private fun animateViews(colourTo: Int) {
+    private fun animateViews() {
         ViewUtils.animateTextColourChange(
             dateTextView,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextHintColourChange(
             noteEditText,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
 
         ViewUtils.animateImageViewColourChange(
             settingsImageButton,
             noteEditText.currentTextColor,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
-
         ViewUtils.animateTextColourChange(
             noteEditText,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextColourChange(
             howWasYourDayTextView,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextColourChange(
             monthTextView,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateWindowColourChange(
             window,
-            colourTo,
-            Constants.ANIMATION_DURATION_COLOR_CHANGES
+            currentColour,
+            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
         )
     }
 
@@ -173,5 +174,20 @@ class MainActivity : BaseActivity() {
         allDayTextViewMap[findViewById(R.id.textView_friday)] = DayOfTheWeek.FRIDAY
         allDayTextViewMap[findViewById(R.id.textView_saturday)] = DayOfTheWeek.SATURDAY
         allDayTextViewMap[findViewById(R.id.textView_sunday)] = DayOfTheWeek.SUNDAY
+    }
+
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        navigationView.postDelayed({
+            val itemId = item.itemId
+            when (itemId) {
+                R.id.navigation_calendar -> {
+                    val intent = Intent(this, CalendarActivity::class.java)
+                    intent.putExtra(Constants.COLOUR_TAG, currentColour)
+                    startActivity(intent)
+                }
+            }
+        }, Constants.ANY_ACTIVITY_START_DELAY)
+        return true
     }
 }

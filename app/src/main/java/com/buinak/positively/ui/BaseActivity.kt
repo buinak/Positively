@@ -22,7 +22,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.buinak.positively.R
 import com.buinak.positively.ui.calendarscreen.CalendarActivity
-import com.buinak.positively.utils.Constants.DELAY
+import com.buinak.positively.utils.Constants.ANY_ACTIVITY_START_DELAY
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 abstract class BaseActivity : AppCompatActivity(),
@@ -53,7 +53,7 @@ abstract class BaseActivity : AppCompatActivity(),
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navigationView.postDelayed({
             val itemId = item.itemId
-            var sameActivity: Boolean = false
+            var sameActivity = false
             when (itemId) {
                 R.id.navigation_calendar -> {
                     if (this is CalendarActivity) sameActivity = true
@@ -68,7 +68,7 @@ abstract class BaseActivity : AppCompatActivity(),
                 }
             }
             if (finish && !sameActivity) finish()
-        }, DELAY)
+        }, ANY_ACTIVITY_START_DELAY)
         return true
     }
 

@@ -17,18 +17,19 @@
 package com.buinak.positively.ui.calendarscreen.recyclerview
 
 import com.airbnb.epoxy.AutoModel
-import com.airbnb.epoxy.TypedEpoxyController
+import com.airbnb.epoxy.Typed2EpoxyController
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
+import io.reactivex.subjects.PublishSubject
 
-class CalendarController : TypedEpoxyController<List<List<DayEntry>>>() {
+class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, PublishSubject<DayEntry>>() {
 
     @AutoModel
     lateinit var header: CalendarHeaderModel_
 
     var lastId: Int = 0
 
-    override fun buildModels(data: List<List<DayEntry>>) {
+    override fun buildModels(data: List<List<DayEntry>>, subject: PublishSubject<DayEntry>) {
         val daysOfTheWeek = ArrayList<String>()
         for (day in DayOfTheWeek.values()) {
             daysOfTheWeek.add(day.toString().substring(0..1).toLowerCase().capitalize())
@@ -38,11 +39,19 @@ class CalendarController : TypedEpoxyController<List<List<DayEntry>>>() {
             .addTo(this)
 
         for (list in data) {
-            WeekModel_()
+            val model = WeekModel_()
                 .id(++lastId)
                 .primaryMonth(data[3][1].monthOfTheYear)
                 .contents(list)
-                .addTo(this)
+                .updateSubject(subject)
+
+            model.secondaryMonth = when (data.indexOf(list)) {
+                0 -> if (list[0].monthOfTheYear != model.primaryMonth) list[0].monthOfTheYear else -1
+                4 -> if (list[6].monthOfTheYear != model.primaryMonth) list[6].monthOfTheYear else -1
+                else -> -1
+            }
+
+            model.addTo(this)
         }
     }
 }

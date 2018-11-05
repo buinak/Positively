@@ -17,6 +17,15 @@
 package com.buinak.positively.utils
 
 object Constants {
-    const val ANIMATION_DURATION_COLOR_CHANGES = 300
-    const val DELAY: Long = 0
+    const val MAIN_ACTIVITY_COLOUR_CHANGES_DELAY = 300
+
+    const val ANY_ACTIVITY_START_DELAY: Long = 0
+
+    const val COLOUR_TAG = "CURRENT_COLOUR"
+
+    const val CALENDAR_ACTIVITY_DEFAULT_DATE_TEXT_SIZE_IN_SP = 18F
+    const val CALENDAR_ACTIVITY_SELECTED_DATE_TEXT_SIZE_IN_SP = 22F
+
+    //default grey colour for text views in android
+    const val DEFAULT_TEXT_GREY_COLOUR = -1979711488
 }

@@ -23,8 +23,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
+import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
+import com.buinak.positively.utils.Constants
+import io.reactivex.subjects.PublishSubject
 
 class CalendarActivity : BaseActivity() {
     private lateinit var viewModel: CalendarViewModel
@@ -32,19 +35,28 @@ class CalendarActivity : BaseActivity() {
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
     private val dateTextView: TextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
 
-    val controller = CalendarController()
+    private val controller by lazy { CalendarController() }
+
+    private val pressedDateSubject = PublishSubject.create<DayEntry>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val colour = intent.getIntExtra(Constants.COLOUR_TAG, 0)
+        window.statusBarColor = colour
+
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = controller.adapter
 
         viewModel = ViewModelProviders.of(this).get(CalendarViewModel::class.java)
         viewModel.getDaysLiveData().observe(this, Observer {
-            controller.setData(it)
+            if (recyclerView.adapter == null) {
+                recyclerView.adapter = controller.adapter
+            }
+            controller.setData(it, pressedDateSubject)
         })
         viewModel.getCurrentCalendarDateLiveData()
             .observe(this, Observer { dateTextView.text = it })
+
+
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar
