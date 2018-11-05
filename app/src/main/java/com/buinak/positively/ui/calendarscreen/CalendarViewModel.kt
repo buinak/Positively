@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.entities.Month
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -35,50 +36,66 @@ class CalendarViewModel : ViewModel() {
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
     private val currentCalendarDate = MutableLiveData<String>()
+    private val currentSelectedDayOfTheWeek = MutableLiveData<DayOfTheWeek>()
 
 
     init {
         PositivelyApplication.inject(this)
-        getCurrentFiveWeeks()
     }
 
     private fun getCurrentFiveWeeks() {
         disposable.add(repository.getCurrentFiveWeeks()
             .subscribeOn(Schedulers.io())
-            .map { list ->
-                val resultList = ArrayList<List<DayEntry>>()
-                var currentList = ArrayList<DayEntry>()
-                for (i in 0 until list.size) {
-                    currentList.add(list[i])
-                    if (i != 0) {
-                        if ((i + 1) % 7 == 0 || i == list.size - 1) {
-                            resultList.add(currentList)
-                            currentList = ArrayList()
-                        }
-                    }
-                }
-                return@map resultList
-            }
+            .map { list -> splitTheListIntoWeeks(list) }
             .subscribe { it ->
                 weeksForTheSelectedMonth.postValue(it)
                 val dateString = "${Month.values()[repository.getCurrentMonth()]}"
-//                    .toLowerCase()
-//                    .capitalize()}, ${repository.getCurrentYear()}"
                 currentCalendarDate.postValue(dateString)
             })
     }
 
+    private fun splitTheListIntoWeeks(list: List<DayEntry>): ArrayList<List<DayEntry>> {
+        val resultList = ArrayList<List<DayEntry>>()
+        var currentList = ArrayList<DayEntry>()
+        for (i in 0 until list.size) {
+            currentList.add(list[i])
+            if (i != 0) {
+                if ((i + 1) % 7 == 0 || i == list.size - 1) {
+                    resultList.add(currentList)
+                    currentList = ArrayList()
+                }
+            }
+        }
+        return resultList
+    }
+
     fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
     fun getCurrentCalendarDateLiveData(): LiveData<String> = currentCalendarDate
+    fun getCurrentSelectedDayOfTheWeek(): LiveData<DayOfTheWeek> = currentSelectedDayOfTheWeek
 
     fun goOneMonthAhead() {
         repository.goOneMonthAhead()
         getCurrentFiveWeeks()
     }
 
+    fun goOneMonthBehind() {
+        repository.goOneMonthBehind()
+        getCurrentFiveWeeks()
+    }
+
+    fun setDate(month: Int, year: Int) {
+        repository.setDate(month, year)
+        getCurrentFiveWeeks()
+    }
+
     fun resetDate() {
         repository.resetToCurrent()
         getCurrentFiveWeeks()
+    }
+
+    fun onDaySelected(dayEntry: DayEntry) {
+        currentSelectedDayOfTheWeek.postValue(repository.getDayOfTheWeek(dayEntry))
+
     }
 
     override fun onCleared() {

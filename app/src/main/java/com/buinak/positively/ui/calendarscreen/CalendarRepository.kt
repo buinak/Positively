@@ -32,6 +32,10 @@ class CalendarRepository(val dataSource: DataSource) {
     private val TOTAL = 5 * 7
     private var calendar = Calendar.getInstance()
 
+    private var dayOfTheWeekCalendar = Calendar.getInstance()
+
+
+    //TODO: make it 7 weeks
     fun getCurrentFiveWeeks(): Observable<List<DayEntry>> {
         val subject: PublishSubject<List<DayEntry>> = PublishSubject.create()
 
@@ -97,7 +101,19 @@ class CalendarRepository(val dataSource: DataSource) {
     }
 
     fun goOneMonthAhead() = calendar.add(Calendar.MONTH, 1)
-
+    fun goOneMonthBehind() = calendar.add(Calendar.MONTH, -1)
     fun getCurrentMonth() = calendar.get(Calendar.MONTH)
     fun getCurrentYear() = calendar.get(Calendar.YEAR)
+
+    fun getDayOfTheWeek(dayEntry: DayEntry): DayOfTheWeek {
+        dayOfTheWeekCalendar.set(Calendar.YEAR, dayEntry.year)
+        dayOfTheWeekCalendar.set(Calendar.MONTH, dayEntry.monthOfTheYear)
+        dayOfTheWeekCalendar.set(Calendar.DAY_OF_MONTH, dayEntry.dayOfTheMonth)
+        return CalendarUtils.getSpecificDayOfTheWeek(dayOfTheWeekCalendar)
+    }
+
+    fun setDate(month: Int, year: Int) {
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+    }
 }

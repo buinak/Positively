@@ -17,7 +17,7 @@
 package com.buinak.positively.ui.calendarscreen
 
 import android.os.Bundle
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -25,29 +25,44 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayEntry
+import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 import com.buinak.positively.utils.Constants
-import io.reactivex.subjects.PublishSubject
+import com.buinak.positively.utils.ViewUtils
+import io.reactivex.subjects.BehaviorSubject
 
 class CalendarActivity : BaseActivity() {
-    private lateinit var viewModel: CalendarViewModel
+    private val viewModel: CalendarViewModel by lazy {
+        ViewModelProviders.of(this).get(CalendarViewModel::class.java)
+    }
 
-    private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
-    private val dateTextView: TextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
+    private val dateTextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
+    private val arrowRight by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
+    private val arrowLeft by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
 
     private val controller by lazy { CalendarController() }
 
-    private val pressedDateSubject = PublishSubject.create<DayEntry>()
+    private var currentColour: Int = -1
+
+    private val pressedDateSubject = BehaviorSubject.create<DayEntry>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val colour = intent.getIntExtra(Constants.COLOUR_TAG, 0)
-        window.statusBarColor = colour
+
+        val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
+        val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
+        val selectedYear = intent.getIntExtra(Constants.CURRENT_YEAR_TAG, -1)
+        if (selectedDay != -1 && selectedMonth != -1) {
+            val dayEntry = DayEntry(selectedDay, selectedMonth, selectedYear)
+            pressedDateSubject.onNext(dayEntry)
+            viewModel.onDaySelected(dayEntry)
+        }
+
+        viewModel.setDate(selectedMonth, selectedYear)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        viewModel = ViewModelProviders.of(this).get(CalendarViewModel::class.java)
         viewModel.getDaysLiveData().observe(this, Observer {
             if (recyclerView.adapter == null) {
                 recyclerView.adapter = controller.adapter
@@ -56,13 +71,41 @@ class CalendarActivity : BaseActivity() {
         })
         viewModel.getCurrentCalendarDateLiveData()
             .observe(this, Observer { dateTextView.text = it })
-        findViewById<Button>(R.id.button).setOnClickListener { viewModel.goOneMonthAhead() }
-        findViewById<Button>(R.id.button2).setOnClickListener { viewModel.resetDate() }
+        viewModel.getCurrentSelectedDayOfTheWeek()
+            .observe(this, Observer { dayOfTheWeek ->
+                val colour = when (dayOfTheWeek) {
+                    DayOfTheWeek.MONDAY -> resources.getColor(R.color.mondayColor)
+                    DayOfTheWeek.TUESDAY -> resources.getColor(R.color.tuesdayColor)
+                    DayOfTheWeek.WEDNESDAY -> resources.getColor(R.color.wednesdayColor)
+                    DayOfTheWeek.THURSDAY -> resources.getColor(R.color.thursdayColor)
+                    DayOfTheWeek.FRIDAY -> resources.getColor(R.color.fridayColor)
+                    DayOfTheWeek.SATURDAY -> resources.getColor(R.color.saturdayColor)
+                    DayOfTheWeek.SUNDAY -> resources.getColor(R.color.sundayColor)
+                    null -> resources.getColor(R.color.greyColor) //can it be?
+                }
+                when (currentColour) {
+                    -1 -> animateColour(colour, 0)
+                    else -> animateColour(colour)
+                }
+                currentColour = colour
+            })
 
+        //it is unusable because there is no way for the observable to emit once the activity is gone
+        val unusableDisposable = pressedDateSubject.subscribe { viewModel.onDaySelected(it) }
+        arrowLeft.setOnClickListener { viewModel.goOneMonthBehind() }
+        arrowRight.setOnClickListener { viewModel.goOneMonthAhead() }
+        dateTextView.setOnClickListener { viewModel.resetDate() }
+    }
+
+    private fun animateColour(
+        colourTo: Int,
+        duration: Int = Constants.ACTIVITY_COLOUR_CHANGES_DELAY
+    ) {
+        ViewUtils.animateWindowColourChange(window, colourTo, duration)
+        ViewUtils.animateTextColourChange(dateTextView, colourTo, duration)
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar
-
     override fun getNavigationMenuItemId(): Int = R.id.navigation_calendar
 
 }

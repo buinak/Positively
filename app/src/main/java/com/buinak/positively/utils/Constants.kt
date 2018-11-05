@@ -17,11 +17,14 @@
 package com.buinak.positively.utils
 
 object Constants {
-    const val MAIN_ACTIVITY_COLOUR_CHANGES_DELAY = 300
+    const val ACTIVITY_COLOUR_CHANGES_DELAY = 300
 
     const val ANY_ACTIVITY_START_DELAY: Long = 0
 
     const val COLOUR_TAG = "CURRENT_COLOUR"
+    const val CURRENT_DATE_TAG = "CURRENT_DATE"
+    const val CURRENT_MONTH_TAG = "CURRENT_MONTH"
+    const val CURRENT_YEAR_TAG = "CURRENT_YEAR"
 
     const val CALENDAR_ACTIVITY_DEFAULT_DATE_TEXT_SIZE_IN_SP = 18F
     const val CALENDAR_ACTIVITY_SELECTED_DATE_TEXT_SIZE_IN_SP = 22F

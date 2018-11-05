@@ -71,10 +71,12 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07'
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
 
     implementation 'com.airbnb.android:epoxy:3.0.0-rc1'
     // Add the annotation processor if you are using Epoxy's annotations (recommended)
     kapt 'com.airbnb.android:epoxy-processor:3.0.0-rc1'
+
 }
 repositories {
     mavenCentral()

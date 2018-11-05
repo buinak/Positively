@@ -30,7 +30,7 @@ import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.Constants
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 
 @EpoxyModelClass(layout = R.layout.activity_calendar_recycler_view_row)
 abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
@@ -39,18 +39,21 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
     lateinit var contents: List<DayEntry>
 
     @EpoxyAttribute
-    lateinit var updateSubject: PublishSubject<DayEntry>
+    lateinit var updateSubject: Subject<DayEntry>
 
     @EpoxyAttribute
-    var primaryMonth: Int = 0
+    var primaryMonth: Int = -1
 
     @EpoxyAttribute
     var secondaryMonth: Int = -1
 
-    var defaultTextSizeInSp = Constants.CALENDAR_ACTIVITY_DEFAULT_DATE_TEXT_SIZE_IN_SP
-    var selectedTextSizeInSp = Constants.CALENDAR_ACTIVITY_SELECTED_DATE_TEXT_SIZE_IN_SP
+    @EpoxyAttribute
+    var primaryYear: Int = -1
 
-    var disposable: Disposable? = null
+    private var defaultTextSizeInSp = Constants.CALENDAR_ACTIVITY_DEFAULT_DATE_TEXT_SIZE_IN_SP
+    private var selectedTextSizeInSp = Constants.CALENDAR_ACTIVITY_SELECTED_DATE_TEXT_SIZE_IN_SP
+
+    private var disposable: Disposable? = null
 
     override fun bind(holder: WeekModel.DateHolder) {
         for (i in 0 until contents.size) {
@@ -64,7 +67,16 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                     1F -> primaryMonth
                     else -> secondaryMonth
                 }
-                updateSubject.onNext(DayEntry(date, month))
+                val year = when (textView.alpha) {
+                    1F -> primaryYear
+                    else -> when (secondaryMonth) {
+                        0 -> if (primaryMonth != 1) (primaryYear + 1) else primaryYear
+                        11 -> if (primaryMonth != 10) (primaryYear - 1) else primaryYear
+                        else -> primaryYear
+                    }
+                }
+                //TODO: TEST CORRECT YEAR FOR JANUARY/DEC
+                updateSubject.onNext(DayEntry(date, month, year))
             }
             disposable = updateSubject.subscribe { date ->
                 holder.textViews.forEach {

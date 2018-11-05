@@ -24,6 +24,7 @@ import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.buinak.positively.R
+import com.buinak.positively.entities.DayOfTheWeek
 
 @EpoxyModelClass(layout = R.layout.activity_calendar_recycler_view_row)
 abstract class CalendarHeaderModel : EpoxyModelWithHolder<CalendarHeaderModel.DateHolder>() {
@@ -33,8 +34,19 @@ abstract class CalendarHeaderModel : EpoxyModelWithHolder<CalendarHeaderModel.Da
 
     override fun bind(holder: DateHolder) {
         for (i in 0 until contents.size) {
-            holder.textViews[i].text = contents[i]
-            holder.textViews[i].setTypeface(null, Typeface.BOLD)
+            val textView = holder.textViews[i]
+            textView.text = contents[i]
+            textView.setTypeface(null, Typeface.BOLD)
+            val colour = when (DayOfTheWeek.values()[i]) {
+                DayOfTheWeek.MONDAY -> textView.resources.getColor(R.color.mondayColor)
+                DayOfTheWeek.TUESDAY -> textView.resources.getColor(R.color.tuesdayColor)
+                DayOfTheWeek.WEDNESDAY -> textView.resources.getColor(R.color.wednesdayColor)
+                DayOfTheWeek.THURSDAY -> textView.resources.getColor(R.color.thursdayColor)
+                DayOfTheWeek.FRIDAY -> textView.resources.getColor(R.color.fridayColor)
+                DayOfTheWeek.SATURDAY -> textView.resources.getColor(R.color.saturdayColor)
+                DayOfTheWeek.SUNDAY -> textView.resources.getColor(R.color.sundayColor)
+            }
+            textView.setTextColor(colour)
         }
     }
 

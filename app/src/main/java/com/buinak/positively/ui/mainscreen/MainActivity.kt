@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
+import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.CalendarActivity
@@ -51,6 +52,8 @@ class MainActivity : BaseActivity() {
     private lateinit var arrowLeftImageView: ImageView
     private lateinit var settingsImageButton: ImageButton
 
+    private lateinit var currentlySelectedDay: DayEntry
+
     private var currentColour: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +68,7 @@ class MainActivity : BaseActivity() {
         viewModel.setNoteTextObservable(RxUtils.observableFromEditText(noteEditText))
 
         viewModel.getCurrentlySelectedDay().observe(this, Observer { selectedDay ->
+            currentlySelectedDay = selectedDay
             onDayOfTheWeekSelected(DayOfTheWeek.valueOf(selectedDay.dayOfTheWeek))
             dateTextView.text = selectedDay.getDateString()
             noteEditText.setText(selectedDay.note)
@@ -130,39 +134,39 @@ class MainActivity : BaseActivity() {
         ViewUtils.animateTextColourChange(
             dateTextView,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextHintColourChange(
             noteEditText,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
 
         ViewUtils.animateImageViewColourChange(
             settingsImageButton,
             noteEditText.currentTextColor,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextColourChange(
             noteEditText,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextColourChange(
             howWasYourDayTextView,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateTextColourChange(
             monthTextView,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
         ViewUtils.animateWindowColourChange(
             window,
             currentColour,
-            Constants.MAIN_ACTIVITY_COLOUR_CHANGES_DELAY
+            Constants.ACTIVITY_COLOUR_CHANGES_DELAY
         )
     }
 
@@ -183,7 +187,12 @@ class MainActivity : BaseActivity() {
             when (itemId) {
                 R.id.navigation_calendar -> {
                     val intent = Intent(this, CalendarActivity::class.java)
-                    intent.putExtra(Constants.COLOUR_TAG, currentColour)
+                    intent.putExtra(Constants.CURRENT_DATE_TAG, currentlySelectedDay.dayOfTheMonth)
+                    intent.putExtra(
+                        Constants.CURRENT_MONTH_TAG,
+                        currentlySelectedDay.monthOfTheYear
+                    )
+                    intent.putExtra(Constants.CURRENT_YEAR_TAG, currentlySelectedDay.year)
                     startActivity(intent)
                 }
             }
