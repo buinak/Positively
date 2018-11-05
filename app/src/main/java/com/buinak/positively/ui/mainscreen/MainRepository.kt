@@ -20,11 +20,8 @@ import com.buinak.positively.data.DataSource
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.CalendarUtils
-import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun IntRange.random() =
     Random().nextInt((endInclusive + 1) - start) + start
@@ -37,24 +34,6 @@ class MainRepository(val dataSource: DataSource) {
     var currentDayOfTheWeek: DayOfTheWeek = CalendarUtils.getCurrentDayOfTheWeek()
 
     lateinit var lastDayEntry: DayEntry
-
-    var noteObservable: PublishSubject<String> = PublishSubject.create()
-
-    init {
-        val disposable = noteObservable
-            .debounce(100, TimeUnit.MILLISECONDS)
-            .subscribe { text ->
-                if (lastDayEntry.note != text) {
-                    lastDayEntry.note = text
-                    dataSource
-                        .saveDay(lastDayEntry)
-                        .subscribe()
-                }
-            }
-
-    }
-
-    fun getObservableSavedDays(): Observable<List<DayEntry>> = dataSource.getAllDays(2018, true)
 
     fun getToday(): Single<DayEntry> {
         currentYear = CalendarUtils.getCurrentYear()
@@ -91,6 +70,9 @@ class MainRepository(val dataSource: DataSource) {
             .doOnSuccess { lastDayEntry = it }
     }
 
-    fun onDayEntryNoteChanged(text: String) = noteObservable.onNext(text)
-
+    fun isNoteChanged(text: String) = lastDayEntry.note != text
+    fun changeNoteAndSaveCurrentEntry(text: String) {
+        lastDayEntry.note = text
+        dataSource.saveDay(lastDayEntry).subscribe()
+    }
 }

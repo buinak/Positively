@@ -23,8 +23,11 @@ import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.entities.Month
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainViewModel : ViewModel() {
@@ -35,6 +38,8 @@ class MainViewModel : ViewModel() {
         MutableLiveData()
     private val currentMonth: MutableLiveData<String> = MutableLiveData()
     private val disposable: CompositeDisposable = CompositeDisposable()
+
+    private var noteDisposable: Disposable? = null
 
 
     init {
@@ -78,7 +83,12 @@ class MainViewModel : ViewModel() {
             })
     }
 
-    fun onNoteTextChanged(text: String) = repository.onDayEntryNoteChanged(text)
+    fun setNoteTextObservable(noteObservable: Observable<String>) {
+        noteDisposable?.dispose()
+        noteDisposable = noteObservable.debounce(100, TimeUnit.MILLISECONDS)
+            .filter { repository.isNoteChanged(it) }
+            .subscribe { repository.changeNoteAndSaveCurrentEntry(it) }
+    }
 
     override fun onCleared() {
         super.onCleared()

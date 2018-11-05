@@ -18,8 +18,6 @@ package com.buinak.positively.ui.mainscreen
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -31,6 +29,7 @@ import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.settingsscreen.SettingsActivity
 import com.buinak.positively.utils.Constants
+import com.buinak.positively.utils.RxUtils
 import com.buinak.positively.utils.ViewUtils
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
@@ -58,21 +57,10 @@ class MainActivity : BaseActivity() {
         initialiseViewVariables()
         initialiseClickListeners()
 
-        val watcher = object : TextWatcher {
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun afterTextChanged(p0: Editable?) {
-                viewModel.onNoteTextChanged(p0.toString())
-            }
-        }
-
-        noteEditText.addTextChangedListener(watcher)
         viewModel = ViewModelProviders.of(this)
             .get(MainViewModel::class.java)
+        viewModel.setNoteTextObservable(RxUtils.observableFromEditText(noteEditText))
+
         viewModel.getCurrentlySelectedDay().observe(this, Observer { selectedDay ->
             onDayOfTheWeekSelected(DayOfTheWeek.valueOf(selectedDay.dayOfTheWeek))
             dateTextView.text = selectedDay.getDateString()
