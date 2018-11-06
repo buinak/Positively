@@ -27,9 +27,22 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import android.app.Activity
+import android.view.inputmethod.InputMethodManager
 
 
 object ViewUtils {
+
+    fun hideKeyboard(activity: Activity) {
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
     //TODO: manual animations for windows and so on
     fun animateViewColourChange(view: View, colourFrom: Int, colourTo: Int, duration: Int) {

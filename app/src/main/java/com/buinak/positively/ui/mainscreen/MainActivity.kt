@@ -19,13 +19,13 @@ package com.buinak.positively.ui.mainscreen
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.buinak.positively.R
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
@@ -36,6 +36,10 @@ import com.buinak.positively.utils.RxUtils
 import com.buinak.positively.utils.ViewUtils
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
+import android.view.ViewGroup
+import com.buinak.positively.R
+import androidx.constraintlayout.widget.ConstraintLayout
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : BaseActivity() {
@@ -52,14 +56,16 @@ class MainActivity : BaseActivity() {
     private lateinit var arrowLeftImageView: ImageView
     private lateinit var settingsImageButton: ImageButton
 
+    private val mainLayout by lazy { findViewById<ConstraintLayout>(R.id.main_activity_constraint_layout)}
+
     private lateinit var currentlySelectedDay: DayEntry
 
     private var currentColour: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        finish = false
-
+        makeViewsHideKeyboard(mainLayout)
+        
         initialiseViewVariables()
         initialiseClickListeners()
 
@@ -113,6 +119,24 @@ class MainActivity : BaseActivity() {
         settingsImageButton.setOnClickListener {
             Observable.timer(Constants.ANY_ACTIVITY_START_DELAY, TimeUnit.MILLISECONDS)
                 .subscribe { startActivity(Intent(this, SettingsActivity::class.java)) }
+        }
+    }
+
+    fun makeViewsHideKeyboard(view: View) {
+        // Set up touch listener for non-text box views to hide keyboard.
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                ViewUtils.hideKeyboard(this)
+                false
+            }
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                makeViewsHideKeyboard(innerView)
+            }
         }
     }
 
