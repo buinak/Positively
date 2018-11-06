@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 
 class CalendarRepository(val dataSource: DataSource) {
     //total amount of days = N * 7, where N = the amount of weeks
-    private val TOTAL = 5 * 7
+    private val TOTAL = 6 * 7
     private var calendar = Calendar.getInstance()
 
     private var dayOfTheWeekCalendar = Calendar.getInstance()
@@ -105,11 +105,12 @@ class CalendarRepository(val dataSource: DataSource) {
     fun getCurrentMonth() = calendar.get(Calendar.MONTH)
     fun getCurrentYear() = calendar.get(Calendar.YEAR)
 
-    fun getDayOfTheWeek(dayEntry: DayEntry): DayOfTheWeek {
-        dayOfTheWeekCalendar.set(Calendar.YEAR, dayEntry.year)
-        dayOfTheWeekCalendar.set(Calendar.MONTH, dayEntry.monthOfTheYear)
-        dayOfTheWeekCalendar.set(Calendar.DAY_OF_MONTH, dayEntry.dayOfTheMonth)
-        return CalendarUtils.getSpecificDayOfTheWeek(dayOfTheWeekCalendar)
+    fun getDayEntry(dayEntry: DayEntry): Single<DayEntry> {
+        return dataSource.getSpecificDay(
+            dayEntry.year,
+            dayEntry.monthOfTheYear,
+            dayEntry.dayOfTheMonth
+        )
     }
 
     fun setDate(month: Int, year: Int) {

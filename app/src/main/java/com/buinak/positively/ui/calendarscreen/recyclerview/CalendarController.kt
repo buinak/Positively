@@ -38,11 +38,16 @@ class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, Subject<D
             .contents(daysOfTheWeek)
             .addTo(this)
 
+        val primaryMonth = data[3][1].monthOfTheYear
+        val primaryYear = data[3][1].year
         for (list in data) {
+            //if the entire last week consists of days belonging to the wrong month, skip it
+            if (list.count { it.monthOfTheYear == primaryMonth } == 0) continue
+
             val model = WeekModel_()
                 .id(++lastId)
-                .primaryMonth(data[3][1].monthOfTheYear)
-                .primaryYear(data[3][1].year)
+                .primaryMonth(primaryMonth)
+                .primaryYear(primaryYear)
                 .contents(list)
                 .updateSubject(subject)
 

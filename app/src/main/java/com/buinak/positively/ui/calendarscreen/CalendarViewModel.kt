@@ -21,7 +21,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
-import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.entities.Month
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -36,7 +35,8 @@ class CalendarViewModel : ViewModel() {
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
     private val currentCalendarDate = MutableLiveData<String>()
-    private val currentSelectedDayOfTheWeek = MutableLiveData<DayOfTheWeek>()
+
+    private val currentSelectedDay = MutableLiveData<DayEntry>()
 
 
     init {
@@ -71,7 +71,7 @@ class CalendarViewModel : ViewModel() {
 
     fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
     fun getCurrentCalendarDateLiveData(): LiveData<String> = currentCalendarDate
-    fun getCurrentSelectedDayOfTheWeek(): LiveData<DayOfTheWeek> = currentSelectedDayOfTheWeek
+    fun getCurrentSelectedDay(): LiveData<DayEntry> = currentSelectedDay
 
     fun goOneMonthAhead() {
         repository.goOneMonthAhead()
@@ -94,8 +94,9 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun onDaySelected(dayEntry: DayEntry) {
-        currentSelectedDayOfTheWeek.postValue(repository.getDayOfTheWeek(dayEntry))
-
+        disposable.add(repository.getDayEntry(dayEntry)
+            .subscribeOn(Schedulers.io())
+            .subscribe { it -> currentSelectedDay.postValue(it) })
     }
 
     override fun onCleared() {

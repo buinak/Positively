@@ -39,8 +39,11 @@ class CalendarActivity : BaseActivity() {
 
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
     private val dateTextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
+    private val noteTextView by lazy { findViewById<TextView>(R.id.textView_note) }
+
     private val arrowRight by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
     private val arrowLeft by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
+
 
     private val controller by lazy { CalendarController() }
 
@@ -71,23 +74,10 @@ class CalendarActivity : BaseActivity() {
         })
         viewModel.getCurrentCalendarDateLiveData()
             .observe(this, Observer { dateTextView.text = it })
-        viewModel.getCurrentSelectedDayOfTheWeek()
-            .observe(this, Observer { dayOfTheWeek ->
-                val colour = when (dayOfTheWeek) {
-                    DayOfTheWeek.MONDAY -> resources.getColor(R.color.mondayColor)
-                    DayOfTheWeek.TUESDAY -> resources.getColor(R.color.tuesdayColor)
-                    DayOfTheWeek.WEDNESDAY -> resources.getColor(R.color.wednesdayColor)
-                    DayOfTheWeek.THURSDAY -> resources.getColor(R.color.thursdayColor)
-                    DayOfTheWeek.FRIDAY -> resources.getColor(R.color.fridayColor)
-                    DayOfTheWeek.SATURDAY -> resources.getColor(R.color.saturdayColor)
-                    DayOfTheWeek.SUNDAY -> resources.getColor(R.color.sundayColor)
-                    null -> resources.getColor(R.color.greyColor) //can it be?
-                }
-                when (currentColour) {
-                    -1 -> animateColour(colour, 0)
-                    else -> animateColour(colour)
-                }
-                currentColour = colour
+        viewModel.getCurrentSelectedDay()
+            .observe(this, Observer { dayEntry ->
+                changeColours(dayEntry)
+                noteTextView.text = dayEntry.note
             })
 
         //it is unusable because there is no way for the observable to emit once the activity is gone
@@ -97,12 +87,31 @@ class CalendarActivity : BaseActivity() {
         dateTextView.setOnClickListener { viewModel.resetDate() }
     }
 
+    private fun changeColours(dayEntry: DayEntry) {
+        val colour = when (DayOfTheWeek.valueOf(dayEntry.dayOfTheWeek)) {
+            DayOfTheWeek.MONDAY -> resources.getColor(R.color.mondayColor)
+            DayOfTheWeek.TUESDAY -> resources.getColor(R.color.tuesdayColor)
+            DayOfTheWeek.WEDNESDAY -> resources.getColor(R.color.wednesdayColor)
+            DayOfTheWeek.THURSDAY -> resources.getColor(R.color.thursdayColor)
+            DayOfTheWeek.FRIDAY -> resources.getColor(R.color.fridayColor)
+            DayOfTheWeek.SATURDAY -> resources.getColor(R.color.saturdayColor)
+            DayOfTheWeek.SUNDAY -> resources.getColor(R.color.sundayColor)
+            null -> resources.getColor(R.color.greyColor) //can it be?
+        }
+        when (currentColour) {
+            -1 -> animateColour(colour, 0)
+            else -> animateColour(colour)
+        }
+        currentColour = colour
+    }
+
     private fun animateColour(
         colourTo: Int,
         duration: Int = Constants.ACTIVITY_COLOUR_CHANGES_DELAY
     ) {
         ViewUtils.animateWindowColourChange(window, colourTo, duration)
         ViewUtils.animateTextColourChange(dateTextView, colourTo, duration)
+        ViewUtils.animateTextColourChange(noteTextView, colourTo, duration)
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar
