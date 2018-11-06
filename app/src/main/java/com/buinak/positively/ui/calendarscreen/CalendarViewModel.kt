@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.Month
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -31,7 +31,8 @@ class CalendarViewModel : ViewModel() {
     @Inject
     lateinit var repository: CalendarRepository
 
-    val disposable = CompositeDisposable()
+    private var monthDisposable: Disposable? = null
+    private var dayDisposable: Disposable? = null
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
     private val currentCalendarDate = MutableLiveData<String>()
@@ -44,14 +45,15 @@ class CalendarViewModel : ViewModel() {
     }
 
     private fun getCurrentFiveWeeks() {
-        disposable.add(repository.getCurrentFiveWeeks()
+        monthDisposable?.dispose()
+        monthDisposable = repository.getCurrentFiveWeeks()
             .subscribeOn(Schedulers.io())
             .map { list -> splitTheListIntoWeeks(list) }
             .subscribe { it ->
                 weeksForTheSelectedMonth.postValue(it)
                 val dateString = "${Month.values()[repository.getCurrentMonth()]}"
                 currentCalendarDate.postValue(dateString)
-            })
+            }
     }
 
     private fun splitTheListIntoWeeks(list: List<DayEntry>): ArrayList<List<DayEntry>> {
@@ -94,14 +96,16 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun onDaySelected(dayEntry: DayEntry) {
-        disposable.add(repository.getDayEntry(dayEntry)
+        dayDisposable?.dispose()
+        dayDisposable = repository.getDayEntry(dayEntry)
             .subscribeOn(Schedulers.io())
-            .subscribe { it -> currentSelectedDay.postValue(it) })
+            .subscribe { it -> currentSelectedDay.postValue(it) }
     }
 
     override fun onCleared() {
         super.onCleared()
-        disposable.dispose()
+        monthDisposable?.dispose()
+        dayDisposable?.dispose()
 
         repository.resetToCurrent()
         getCurrentFiveWeeks()

@@ -51,10 +51,12 @@ class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, Subject<D
                 .contents(list)
                 .updateSubject(subject)
 
+            if (data.indexOf(list) == (data.size - 1)) {
+                println()
+            }
             model.secondaryMonth = when (data.indexOf(list)) {
                 0 -> if (list[0].monthOfTheYear != model.primaryMonth) list[0].monthOfTheYear else -1
-                (data.size - 1) -> if (list[6].monthOfTheYear != model.primaryMonth) list[6].monthOfTheYear else -1
-                else -> -1
+                else -> if (list[6].monthOfTheYear != model.primaryMonth) list[6].monthOfTheYear else -1
             }
 
             model.addTo(this)

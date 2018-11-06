@@ -21,16 +21,31 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object CalendarUtils {
-        fun getAmountOfDaysInAMonth(year: Int, month: Int) =
-            GregorianCalendar(year, month - 1, 1).getActualMaximum(Calendar.DAY_OF_MONTH)
+    fun getAmountOfDaysInAMonth(year: Int, month: Int) =
+        GregorianCalendar(year, month - 1, 1).getActualMaximum(Calendar.DAY_OF_MONTH)
 
-        fun getCurrentYear() = Calendar.getInstance().get(Calendar.YEAR)
-        fun getCurrentMonth() = Calendar.getInstance().get(Calendar.MONTH)
-        fun getCurrentDayOfTheMonth() = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    fun getCurrentYear() = Calendar.getInstance().get(Calendar.YEAR)
+    fun getCurrentMonth() = Calendar.getInstance().get(Calendar.MONTH)
+    fun getCurrentDayOfTheMonth() = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
-        fun getSpecificDayOfTheWeek(calendar: Calendar) = DayOfTheWeek.valueOf(getDayString(calendar).toUpperCase())
-        fun getCurrentDayOfTheWeek() = DayOfTheWeek.valueOf(getDayString(Calendar.getInstance()).toUpperCase())
+    fun getSpecificDayOfTheWeek(calendar: Calendar) =
+        DayOfTheWeek.valueOf(getDayString(calendar).toUpperCase())
 
-        private fun getDayString(calendar: Calendar) = SimpleDateFormat("EEEE", Locale.ENGLISH)
-            .format(calendar.time.time)
+    fun getSpecificDayOfTheWeek(
+        selectedDay: Int,
+        selectedMonth: Int,
+        selectedYear: Int
+    ): DayOfTheWeek {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DAY_OF_MONTH, selectedDay)
+        calendar.set(Calendar.MONTH, selectedMonth)
+        calendar.set(Calendar.YEAR, selectedYear)
+        return DayOfTheWeek.valueOf(getDayString(calendar).toUpperCase())
+    }
+
+    fun getCurrentDayOfTheWeek() =
+        DayOfTheWeek.valueOf(getDayString(Calendar.getInstance()).toUpperCase())
+
+    private fun getDayString(calendar: Calendar) = SimpleDateFormat("EEEE", Locale.ENGLISH)
+        .format(calendar.time.time)
 }

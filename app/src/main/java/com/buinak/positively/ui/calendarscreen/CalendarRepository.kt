@@ -22,6 +22,7 @@ import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import kotlin.collections.ArrayList
@@ -33,6 +34,7 @@ class CalendarRepository(val dataSource: DataSource) {
     private var calendar = Calendar.getInstance()
 
     private var dayOfTheWeekCalendar = Calendar.getInstance()
+    private var disposable: Disposable? = null
 
 
     //TODO: make it 7 weeks
@@ -45,7 +47,9 @@ class CalendarRepository(val dataSource: DataSource) {
             0 -> listOf(11, 0, 1)
             else -> listOf(currentMonth - 1, currentMonth, currentMonth + 1)
         }
-        val disposable = dataSource.getAllDays()
+        disposable?.dispose()
+        disposable = dataSource.getAllDays()
+            .take(1)
             .map { list -> list.filter { entry -> acceptableMonths.contains(entry.monthOfTheYear) } }
             .subscribe { savedEntriesList ->
                 getListOfEmptyDayEntries().subscribe { emptyEntriesList ->
