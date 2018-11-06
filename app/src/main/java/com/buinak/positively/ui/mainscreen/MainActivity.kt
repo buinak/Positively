@@ -20,12 +20,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.buinak.positively.R
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.ui.BaseActivity
@@ -36,10 +39,6 @@ import com.buinak.positively.utils.RxUtils
 import com.buinak.positively.utils.ViewUtils
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
-import android.view.ViewGroup
-import com.buinak.positively.R
-import androidx.constraintlayout.widget.ConstraintLayout
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : BaseActivity() {
@@ -116,13 +115,14 @@ class MainActivity : BaseActivity() {
         arrowRightImageView.setOnClickListener { viewModel.onGoRightClicked() }
         arrowLeftImageView.setOnClickListener { viewModel.onGoLeftClicked() }
         dateTextView.setOnClickListener { viewModel.onDayResetToToday() }
+        monthTextView.setOnClickListener { viewModel.onDayResetToToday() }
         settingsImageButton.setOnClickListener {
             Observable.timer(Constants.ANY_ACTIVITY_START_DELAY, TimeUnit.MILLISECONDS)
                 .subscribe { startActivity(Intent(this, SettingsActivity::class.java)) }
         }
     }
 
-    fun makeViewsHideKeyboard(view: View) {
+    private fun makeViewsHideKeyboard(view: View) {
         // Set up touch listener for non-text box views to hide keyboard.
         if (view !is EditText) {
             view.setOnTouchListener { v, event ->

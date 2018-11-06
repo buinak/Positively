@@ -96,7 +96,6 @@ class CalendarActivity : BaseActivity() {
             DayOfTheWeek.FRIDAY -> resources.getColor(R.color.fridayColor)
             DayOfTheWeek.SATURDAY -> resources.getColor(R.color.saturdayColor)
             DayOfTheWeek.SUNDAY -> resources.getColor(R.color.sundayColor)
-            null -> resources.getColor(R.color.greyColor) //can it be?
         }
         when (currentColour) {
             -1 -> animateColour(colour, 0)
