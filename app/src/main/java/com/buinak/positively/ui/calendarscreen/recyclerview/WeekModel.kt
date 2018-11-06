@@ -80,11 +80,8 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
             }
             disposable = updateSubject.subscribe { date ->
                 holder.textViews.forEach {
+                    it.background = null
                     it.setTypeface(null, Typeface.NORMAL)
-                    it.setTextSize(
-                        TypedValue.COMPLEX_UNIT_SP,
-                        defaultTextSizeInSp
-                    )
                 }
 
                 //if the selected date belongs to this week model
@@ -100,11 +97,8 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                     val index = contents.indexOfFirst { it.dayOfTheMonth == date.dayOfTheMonth }
                     val selectedTextView = holder.textViews.getOrNull(index)
                     if (selectedTextView?.alpha == opacity) {
+                        selectedTextView.setBackgroundResource(R.drawable.circle_drawable)
                         selectedTextView.setTypeface(null, Typeface.BOLD)
-                        selectedTextView.setTextSize(
-                            TypedValue.COMPLEX_UNIT_SP,
-                            selectedTextSizeInSp
-                        )
                     }
                 }
             }

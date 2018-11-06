@@ -32,7 +32,7 @@ class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, Subject<D
     override fun buildModels(data: List<List<DayEntry>>, subject: Subject<DayEntry>) {
         val daysOfTheWeek = ArrayList<String>()
         for (day in DayOfTheWeek.values()) {
-            daysOfTheWeek.add(day.toString().substring(0..1).toLowerCase().capitalize())
+            daysOfTheWeek.add(day.toString()[0].toUpperCase().toString())
         }
         header
             .contents(daysOfTheWeek)

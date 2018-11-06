@@ -35,10 +35,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_monday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
     </FrameLayout>
@@ -54,10 +57,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_tuesday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
 
@@ -74,10 +80,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_sunday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
 
@@ -94,10 +103,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_thursday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
 
@@ -114,10 +126,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_saturday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
     </FrameLayout>
@@ -133,10 +148,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_friday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
 
@@ -153,10 +171,13 @@
 
         <TextView
             android:id="@+id/textView_calendar_wednesday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:text="1"
             android:textSize="18sp" />
 
