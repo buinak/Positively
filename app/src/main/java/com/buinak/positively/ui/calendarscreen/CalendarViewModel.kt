@@ -36,7 +36,6 @@ class CalendarViewModel : ViewModel() {
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
     private val currentCalendarDate = MutableLiveData<String>()
-
     private val currentSelectedDay = MutableLiveData<DayEntry>()
 
 

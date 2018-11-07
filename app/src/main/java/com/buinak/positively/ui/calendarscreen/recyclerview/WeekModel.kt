@@ -62,20 +62,6 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
             initialiseTextView(textView, entry)
 
             (textView.parent as FrameLayout).setOnClickListener {
-                val date = textView.text.toString().toInt()
-                val month = when (textView.alpha) {
-                    1F -> primaryMonth
-                    else -> secondaryMonth
-                }
-                val year = when (textView.alpha) {
-                    1F -> primaryYear
-                    else -> when (secondaryMonth) {
-                        0 -> if (primaryMonth != 1) (primaryYear + 1) else primaryYear
-                        11 -> if (primaryMonth != 10) (primaryYear - 1) else primaryYear
-                        else -> primaryYear
-                    }
-                }
-                //TODO: TEST CORRECT YEAR FOR JANUARY/DEC
                 val dayEntry = contents[holder.textViews.indexOf(textView)]
                 updateSubject.onNext(dayEntry)
             }
@@ -83,12 +69,6 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                 holder.textViews.forEach {
                     it.background = null
                     it.setTypeface(null, Typeface.NORMAL)
-                }
-                val prm = primaryMonth
-                val scm = secondaryMonth
-                val pry = primaryYear
-                if (secondaryMonth == 11) {
-                    println()
                 }
                 //if the selected date belongs to this week model
                 if (date.monthOfTheYear == primaryMonth || date.monthOfTheYear == secondaryMonth) {

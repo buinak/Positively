@@ -36,6 +36,8 @@ class CalendarRepository(val dataSource: DataSource) {
     private var dayOfTheWeekCalendar = Calendar.getInstance()
     private var disposable: Disposable? = null
 
+    private var lastData: List<DayEntry>? = null
+
 
     //TODO: make it 7 weeks
     fun getCurrentFiveWeeks(): Observable<List<DayEntry>> {
@@ -53,7 +55,10 @@ class CalendarRepository(val dataSource: DataSource) {
             .map { list -> list.filter { entry -> acceptableMonths.contains(entry.monthOfTheYear) } }
             .subscribe { savedEntriesList ->
                 getListOfEmptyDayEntries().subscribe { emptyEntriesList ->
-                    subject.onNext(filterLists(savedEntriesList, emptyEntriesList))
+                    val data = filterLists(savedEntriesList, emptyEntriesList)
+                    lastData = data
+
+                    subject.onNext(lastData!!)
                 }
             }
 
@@ -110,6 +115,13 @@ class CalendarRepository(val dataSource: DataSource) {
     fun getCurrentYear() = calendar.get(Calendar.YEAR)
 
     fun getDayEntry(dayEntry: DayEntry): Single<DayEntry> {
+        if (lastData != null) {
+            val entryFromLastData = lastData!!.firstOrNull { it == dayEntry }
+            if (entryFromLastData != null) {
+                return Single.just(entryFromLastData)
+            }
+        }
+
         return dataSource.getSpecificDay(
             dayEntry.year,
             dayEntry.monthOfTheYear,
