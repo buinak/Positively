@@ -35,8 +35,9 @@ class CalendarViewModel : ViewModel() {
     private var dayDisposable: Disposable? = null
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
+
     private val currentCalendarMonth = MutableLiveData<String>()
-    private val currentCalendarYear = MutableLiveData<String>()
+    private val currentCalendarDate = MutableLiveData<String>()
 
     private val currentSelectedDay = MutableLiveData<DayEntry>()
 
@@ -52,9 +53,24 @@ class CalendarViewModel : ViewModel() {
             .map { list -> splitTheListIntoWeeks(list) }
             .subscribe { it ->
                 weeksForTheSelectedMonth.postValue(it)
-                val dateString = "${Month.values()[repository.getCurrentMonth()]}"
-                currentCalendarMonth.postValue(dateString)
-                currentCalendarYear.postValue(repository.getCurrentYear().toString())
+
+                val currentYear = repository.getCurrentYear()
+                val currentMonth = (repository.getCurrentMonth() + 1)
+                val currentDay = repository.getCurrentDayOfTheMonth()
+                val currentDayString = when (currentDay < 10) {
+                    true -> "0$currentDay"
+                    false -> "$currentDay"
+                }
+                val currentMonthString = when (currentMonth < 10) {
+                    true -> "0$currentMonth"
+                    false -> "$currentMonth"
+                }
+
+                val dateString = "$currentDayString.$currentMonthString.$currentYear"
+                currentCalendarDate.postValue(dateString)
+
+                val monthString = "${Month.values()[repository.getCurrentMonth()]}"
+                currentCalendarMonth.postValue(monthString)
             }
     }
 
@@ -74,8 +90,9 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
+
     fun getCurrentCalendarMonthLiveData(): LiveData<String> = currentCalendarMonth
-    fun getCurrentCalendarYearLiveData(): LiveData<String> = currentCalendarYear
+    fun getCurrentCalendarDateLiveData(): LiveData<String> = currentCalendarDate
 
     fun getCurrentSelectedDay(): LiveData<DayEntry> = currentSelectedDay
 
