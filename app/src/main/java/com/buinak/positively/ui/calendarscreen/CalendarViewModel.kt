@@ -35,7 +35,9 @@ class CalendarViewModel : ViewModel() {
     private var dayDisposable: Disposable? = null
 
     private val weeksForTheSelectedMonth = MutableLiveData<List<List<DayEntry>>>()
-    private val currentCalendarDate = MutableLiveData<String>()
+    private val currentCalendarMonth = MutableLiveData<String>()
+    private val currentCalendarYear = MutableLiveData<String>()
+
     private val currentSelectedDay = MutableLiveData<DayEntry>()
 
 
@@ -51,7 +53,8 @@ class CalendarViewModel : ViewModel() {
             .subscribe { it ->
                 weeksForTheSelectedMonth.postValue(it)
                 val dateString = "${Month.values()[repository.getCurrentMonth()]}"
-                currentCalendarDate.postValue(dateString)
+                currentCalendarMonth.postValue(dateString)
+                currentCalendarYear.postValue(repository.getCurrentYear().toString())
             }
     }
 
@@ -71,7 +74,9 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun getDaysLiveData(): LiveData<List<List<DayEntry>>> = weeksForTheSelectedMonth
-    fun getCurrentCalendarDateLiveData(): LiveData<String> = currentCalendarDate
+    fun getCurrentCalendarMonthLiveData(): LiveData<String> = currentCalendarMonth
+    fun getCurrentCalendarYearLiveData(): LiveData<String> = currentCalendarYear
+
     fun getCurrentSelectedDay(): LiveData<DayEntry> = currentSelectedDay
 
     fun goOneMonthAhead() {

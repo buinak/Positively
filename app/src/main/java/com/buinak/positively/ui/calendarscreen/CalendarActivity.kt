@@ -39,6 +39,7 @@ class CalendarActivity : BaseActivity() {
 
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerView_calendar) }
     private val dateTextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
+    private val yearTextView by lazy { findViewById<TextView>(R.id.textView_calendar_year) }
     private val noteTextView by lazy { findViewById<TextView>(R.id.textView_note) }
 
     private val arrowRight by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
@@ -72,8 +73,11 @@ class CalendarActivity : BaseActivity() {
             }
             controller.setData(it, pressedDateSubject)
         })
-        viewModel.getCurrentCalendarDateLiveData()
+        viewModel.getCurrentCalendarMonthLiveData()
             .observe(this, Observer { dateTextView.text = it })
+        viewModel.getCurrentCalendarYearLiveData()
+            .observe(this, Observer { yearTextView.text = it })
+
         viewModel.getCurrentSelectedDay()
             .observe(this, Observer { dayEntry ->
                 changeColours(dayEntry)
@@ -110,6 +114,7 @@ class CalendarActivity : BaseActivity() {
     ) {
         ViewUtils.animateWindowColourChange(window, colourTo, duration)
         ViewUtils.animateTextColourChange(dateTextView, colourTo, duration)
+        ViewUtils.animateTextColourChange(yearTextView, colourTo, duration)
         ViewUtils.animateTextColourChange(noteTextView, colourTo, duration)
     }
 
