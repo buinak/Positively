@@ -115,15 +115,8 @@ class CalendarRepository(val dataSource: DataSource) {
     fun getCurrentMonth() = calendar.get(Calendar.MONTH)
     fun getCurrentYear() = calendar.get(Calendar.YEAR)
 
-    fun getDayEntry(dayEntry: DayEntry): Single<DayEntry> {
-        if (lastData != null) {
-            val entryFromLastData = lastData!!.firstOrNull { it == dayEntry }
-            if (entryFromLastData != null) {
-                return Single.just(entryFromLastData)
-            }
-        }
-
-        return dataSource.getSpecificDay(
+    fun getDayEntry(dayEntry: DayEntry): Observable<DayEntry> {
+        return dataSource.getSpecificDayObservable(
             dayEntry.year,
             dayEntry.monthOfTheYear,
             dayEntry.dayOfTheMonth

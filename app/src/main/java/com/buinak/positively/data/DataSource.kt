@@ -26,5 +26,6 @@ interface DataSource {
     fun removeAllDays(): Completable
 
     fun getAllDays(year: Int = 0, sorted: Boolean = false): Observable<List<DayEntry>>
+    fun getSpecificDayObservable(year: Int, month: Int, day: Int): Observable<DayEntry>
     fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry>
 }

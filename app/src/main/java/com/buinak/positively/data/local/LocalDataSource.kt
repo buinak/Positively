@@ -27,4 +27,5 @@ interface LocalDataSource {
 
     fun getAllDays(year: Int = 0, sorted: Boolean = false): Observable<List<DayEntry>>
     fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry>
+    fun getSpecificDayObservable(year: Int, month: Int, day: Int): Observable<DayEntry>
 }

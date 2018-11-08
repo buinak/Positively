@@ -52,6 +52,38 @@ class LocalDatabaseInteractor {
         }
     }
 
+    fun getSpecificDayObservable(year: Int, month: Int, day: Int): Observable<DayEntry> {
+        val realm = Realm.getDefaultInstance()
+        val subject = PublishSubject.create<DayEntry>()
+        realm.use {
+            val query = realm.where(DayEntry::class.java)
+                .equalTo("year", year)
+                .equalTo("monthOfTheYear", month)
+                .equalTo("dayOfTheMonth", day)
+
+            if (query.findFirst() == null) {
+                val newDay = DayEntry(day, month, year)
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, day)
+                newDay.dayOfTheWeek = CalendarUtils.getSpecificDayOfTheWeek(calendar).toString()
+                realm.executeTransaction { r -> r.copyToRealm(newDay) }
+            }
+
+            realm.where(DayEntry::class.java)
+                .findAllAsync()
+                .asFlowable()
+                .toObservable()
+                .map { list ->
+                    list.first { entry -> entry == DayEntry(day, month, year) }
+                }
+                .subscribe { result -> subject.onNext(realm.copyFromRealm(result)) }
+
+            return subject
+        }
+    }
+
     fun getSpecificDay(year: Int, month: Int, day: Int): Single<DayEntry> {
         val realm = Realm.getDefaultInstance()
         realm.use {

@@ -55,16 +55,20 @@ class CalendarActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
-        val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
-        val selectedYear = intent.getIntExtra(Constants.CURRENT_YEAR_TAG, -1)
-        if (selectedDay != -1 && selectedMonth != -1) {
-            val dayEntry = DayEntry(selectedDay, selectedMonth, selectedYear)
-            pressedDateSubject.onNext(dayEntry)
-            viewModel.onDaySelected(dayEntry)
-        }
+        val restart = savedInstanceState?.getString("RESTART")
 
-        viewModel.setDate(selectedMonth, selectedYear)
+        if (restart == null) {
+            val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
+            val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
+            val selectedYear = intent.getIntExtra(Constants.CURRENT_YEAR_TAG, -1)
+            if (selectedDay != -1 && selectedMonth != -1) {
+                val dayEntry = DayEntry(selectedDay, selectedMonth, selectedYear)
+                pressedDateSubject.onNext(dayEntry)
+                viewModel.onDaySelected(dayEntry)
+            }
+
+            viewModel.setDate(selectedMonth, selectedYear)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         viewModel.getDaysLiveData().observe(this, Observer {
@@ -82,6 +86,7 @@ class CalendarActivity : BaseActivity() {
             .observe(this, Observer { dayEntry ->
                 changeColours(dayEntry)
                 noteTextView.text = dayEntry.note
+                pressedDateSubject.onNext(dayEntry)
             })
 
         //it is unusable because there is no way for the observable to emit once the activity is gone
@@ -121,4 +126,8 @@ class CalendarActivity : BaseActivity() {
     override fun getContentViewId(): Int = R.layout.activity_calendar
     override fun getNavigationMenuItemId(): Int = R.id.navigation_calendar
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putString("RESTART", "")
+    }
 }

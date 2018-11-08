@@ -40,6 +40,7 @@ class MainViewModel : ViewModel() {
     private val disposable: CompositeDisposable = CompositeDisposable()
 
     private var noteDisposable: Disposable? = null
+    private var dayDisposable: Disposable? = null
 
 
     init {
@@ -57,35 +58,38 @@ class MainViewModel : ViewModel() {
 
 
     private fun requestRepositoryDayAndSubscribe(difference: Int, backwards: Boolean = false) {
-        disposable.add(repository.getDayWithDifference(difference, backwards)
+        dayDisposable?.dispose()
+        dayDisposable = repository.getDayWithDifference(difference, backwards)
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
                 currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
-            })
+            }
     }
 
     private fun requestRepositoryDayAndSubscribe() {
-        disposable.add(repository.getToday()
+        dayDisposable?.dispose()
+        dayDisposable = repository.getToday()
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
                 currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
-            })
+            }
     }
 
     private fun requestRepositoryDayAndSubscribe(dayOfTheWeek: DayOfTheWeek) {
-        disposable.add(repository.getSpecificDay(dayOfTheWeek)
+        dayDisposable?.dispose()
+        dayDisposable = repository.getSpecificDay(dayOfTheWeek)
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)
                 currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
-            })
+            }
     }
 
     fun setNoteTextObservable(noteObservable: Observable<String>) {
         noteDisposable?.dispose()
-        noteDisposable = noteObservable.debounce(100, TimeUnit.MILLISECONDS)
+        noteDisposable = noteObservable.debounce(50, TimeUnit.MILLISECONDS)
             .filter { repository.isNoteChanged(it) }
             .subscribe { repository.changeNoteAndSaveCurrentEntry(it) }
     }

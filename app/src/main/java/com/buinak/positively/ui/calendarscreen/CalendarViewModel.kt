@@ -40,6 +40,7 @@ class CalendarViewModel : ViewModel() {
     private val currentCalendarDate = MutableLiveData<String>()
 
     private val currentSelectedDay = MutableLiveData<DayEntry>()
+    private var lastSelected: DayEntry? = null
 
 
     init {
@@ -117,10 +118,37 @@ class CalendarViewModel : ViewModel() {
     }
 
     fun onDaySelected(dayEntry: DayEntry) {
+        //posts the date strings from the day entry passed
+        fun postDate(dayEntry: DayEntry) {
+            val currentYear = dayEntry.year
+            val currentMonth = (dayEntry.monthOfTheYear + 1)
+            val currentDay = dayEntry.dayOfTheMonth
+            val currentDayString = when (currentDay < 10) {
+                true -> "0$currentDay"
+                false -> "$currentDay"
+            }
+            val currentMonthString = when (currentMonth < 10) {
+                true -> "0$currentMonth"
+                false -> "$currentMonth"
+            }
+
+            val dateString = "$currentDayString.$currentMonthString.$currentYear"
+            currentCalendarDate.postValue(dateString)
+
+            val monthString = "${Month.values()[dayEntry.monthOfTheYear]}"
+            currentCalendarMonth.postValue(monthString)
+        }
+
+        if (lastSelected == dayEntry) return
         dayDisposable?.dispose()
+        lastSelected = dayEntry
+
         dayDisposable = repository.getDayEntry(dayEntry)
             .subscribeOn(Schedulers.io())
-            .subscribe { it -> currentSelectedDay.postValue(it) }
+            .subscribe { it ->
+                postDate(it)
+                currentSelectedDay.postValue(it)
+            }
     }
 
     override fun onCleared() {
