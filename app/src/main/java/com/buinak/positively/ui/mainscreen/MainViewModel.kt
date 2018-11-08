@@ -24,7 +24,6 @@ import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.entities.Month
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -37,7 +36,6 @@ class MainViewModel : ViewModel() {
     private val currentSelectedDay: MutableLiveData<DayEntry> =
         MutableLiveData()
     private val currentMonth: MutableLiveData<String> = MutableLiveData()
-    private val disposable: CompositeDisposable = CompositeDisposable()
 
     private var noteDisposable: Disposable? = null
     private var dayDisposable: Disposable? = null
@@ -92,10 +90,5 @@ class MainViewModel : ViewModel() {
         noteDisposable = noteObservable.debounce(50, TimeUnit.MILLISECONDS)
             .filter { repository.isNoteChanged(it) }
             .subscribe { repository.changeNoteAndSaveCurrentEntry(it) }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        disposable.dispose()
     }
 }
