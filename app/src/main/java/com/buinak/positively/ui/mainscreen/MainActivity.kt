@@ -38,6 +38,7 @@ import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.RxUtils
 import com.buinak.positively.utils.ViewUtils
 import io.reactivex.Observable
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -217,10 +218,18 @@ class MainActivity : BaseActivity() {
                         currentlySelectedDay.monthOfTheYear
                     )
                     intent.putExtra(Constants.CURRENT_YEAR_TAG, currentlySelectedDay.year)
-                    startActivity(intent)
+                    startActivityForResult(intent, Constants.ACTIVITY_REQUEST_CODE)
                 }
             }
         }, Constants.ANY_ACTIVITY_START_DELAY)
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode != Constants.ACTIVITY_REQUEST_CODE) return
+        if (resultCode != 1) return
+
+        val id = data!!.getStringExtra(Constants.RESULT_ID_TAG)
+        viewModel.onDayByIdSelected(id)
     }
 }

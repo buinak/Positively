@@ -151,6 +151,17 @@ class CalendarViewModel : ViewModel() {
             }
     }
 
+    fun getDayEntryIdForModification(dayEntry: DayEntry): LiveData<String> {
+        val liveData = MutableLiveData<String>()
+        val disposable = repository.getDayEntry(dayEntry)
+            .subscribeOn(Schedulers.io())
+            .map { it -> it.id }
+            .take(1)
+            .subscribe { liveData.postValue(it) }
+
+        return liveData
+    }
+
     override fun onCleared() {
         super.onCleared()
         monthDisposable?.dispose()

@@ -22,6 +22,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 class LocalDataRepository(val databaseInteractor: LocalDatabaseInteractor) : LocalDataSource {
+    override fun getSpecificDay(id: String): Single<DayEntry> {
+        return databaseInteractor.getSpecificDay(id)
+    }
+
     override fun getSpecificDayObservable(year: Int, month: Int, day: Int): Observable<DayEntry> =
         databaseInteractor.getSpecificDayObservable(year, month, day)
 

@@ -16,6 +16,7 @@
 
 package com.buinak.positively.ui.calendarscreen
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,7 +31,9 @@ import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.ViewUtils
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 
 class CalendarActivity : BaseActivity() {
     private val viewModel: CalendarViewModel by lazy {
@@ -50,14 +53,18 @@ class CalendarActivity : BaseActivity() {
 
     private var currentColour: Int = -1
 
-    private val pressedDateSubject = BehaviorSubject.create<DayEntry>()
+    private var pressedDateSubject: BehaviorSubject<DayEntry> = BehaviorSubject.create<DayEntry>()
+    private var longPressedDateSubject: PublishSubject<DayEntry> = PublishSubject.create<DayEntry>()
+
+    private val compositeDisposable = CompositeDisposable()
+    private var hasBeenInitialised = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val restart = savedInstanceState?.getString("RESTART")
+        val isFreshlyStarted = savedInstanceState?.getBoolean("isFreshlyStarted") ?: true
 
-        if (restart == null) {
+        if (isFreshlyStarted) {
             val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
             val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
             val selectedYear = intent.getIntExtra(Constants.CURRENT_YEAR_TAG, -1)
@@ -70,12 +77,19 @@ class CalendarActivity : BaseActivity() {
             viewModel.setDate(selectedMonth, selectedYear)
         }
 
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         viewModel.getDaysLiveData().observe(this, Observer {
             if (recyclerView.adapter == null) {
                 recyclerView.adapter = controller.adapter
             }
-            controller.setData(it, pressedDateSubject)
+            if (!hasBeenInitialised) {
+                controller.setData(it, pressedDateSubject, longPressedDateSubject)
+            } else {
+                pressedDateSubject = BehaviorSubject.create()
+                longPressedDateSubject = PublishSubject.create()
+                controller.setData(it, pressedDateSubject, longPressedDateSubject)
+            }
         })
         viewModel.getCurrentCalendarDateLiveData()
             .observe(this, Observer { dateTextView.text = it })
@@ -90,7 +104,15 @@ class CalendarActivity : BaseActivity() {
             })
 
         //it is unusable because there is no way for the observable to emit once the activity is gone
-        val unusableDisposable = pressedDateSubject.subscribe { viewModel.onDaySelected(it) }
+        compositeDisposable.add(pressedDateSubject.subscribe { viewModel.onDaySelected(it) })
+        compositeDisposable.add(longPressedDateSubject.subscribe { dayEntry ->
+            viewModel.getDayEntryIdForModification(dayEntry).observe(this, Observer { id ->
+                val resultIntent = Intent()
+                resultIntent.putExtra(Constants.RESULT_ID_TAG, id)
+                setResult(Constants.ACTIVITY_REQUEST_CODE, resultIntent)
+                finish()
+            })
+        })
         arrowLeft.setOnClickListener { viewModel.goOneMonthBehind() }
         arrowRight.setOnClickListener { viewModel.goOneMonthAhead() }
         dateTextView.setOnClickListener { viewModel.resetDate() }
@@ -128,6 +150,6 @@ class CalendarActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putString("RESTART", "")
+        outState?.putBoolean("isRestarted", false)
     }
 }

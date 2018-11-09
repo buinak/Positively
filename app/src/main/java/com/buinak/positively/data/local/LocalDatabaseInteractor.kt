@@ -27,6 +27,7 @@ import java.util.*
 
 class LocalDatabaseInteractor {
 
+
     fun saveDay(dayEntry: DayEntry): Completable {
         return Completable.fromAction {
             val realm = Realm.getDefaultInstance()
@@ -107,6 +108,19 @@ class LocalDatabaseInteractor {
                 }
                 else -> Single.just(realm.copyFromRealm(result))
             }
+        }
+    }
+
+    fun getSpecificDay(id: String): Single<DayEntry> {
+        val realm = Realm.getDefaultInstance()
+        realm.use {
+            val result = realm.where(DayEntry::class.java)
+                .equalTo("id", id)
+                .findFirst()
+
+            result ?: return Single.just(null)
+            val unmanagedResult = realm.copyFromRealm(result)
+            return Single.just(unmanagedResult)
         }
     }
 

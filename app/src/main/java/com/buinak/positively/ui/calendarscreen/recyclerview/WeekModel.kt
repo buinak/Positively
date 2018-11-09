@@ -42,6 +42,9 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
     lateinit var updateSubject: Subject<DayEntry>
 
     @EpoxyAttribute
+    lateinit var longClickSubject: Subject<DayEntry>
+
+    @EpoxyAttribute
     var primaryMonth: Int = -1
 
     @EpoxyAttribute
@@ -65,6 +68,13 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                 val dayEntry = contents[holder.textViews.indexOf(textView)]
                 updateSubject.onNext(dayEntry)
             }
+
+            (textView.parent as FrameLayout).setOnLongClickListener {
+                val dayEntry = contents[holder.textViews.indexOf(textView)]
+                longClickSubject.onNext(dayEntry)
+                return@setOnLongClickListener true
+            }
+
             disposable = updateSubject.subscribe { date ->
                 holder.textViews.forEach {
                     it.background = null

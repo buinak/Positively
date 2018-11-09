@@ -17,19 +17,24 @@
 package com.buinak.positively.ui.calendarscreen.recyclerview
 
 import com.airbnb.epoxy.AutoModel
-import com.airbnb.epoxy.Typed2EpoxyController
+import com.airbnb.epoxy.Typed3EpoxyController
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import io.reactivex.subjects.Subject
 
-class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, Subject<DayEntry>>() {
+class CalendarController :
+    Typed3EpoxyController<List<List<DayEntry>>, Subject<DayEntry>, Subject<DayEntry>>() {
 
     @AutoModel
     lateinit var header: CalendarHeaderModel_
 
     var lastId: Int = 0
 
-    override fun buildModels(data: List<List<DayEntry>>, subject: Subject<DayEntry>) {
+    override fun buildModels(
+        data: List<List<DayEntry>>,
+        onClickSubject: Subject<DayEntry>,
+        onLongClickSubject: Subject<DayEntry>
+    ) {
         val daysOfTheWeek = ArrayList<String>()
         for (day in DayOfTheWeek.values()) {
             daysOfTheWeek.add(day.toString()[0].toUpperCase().toString())
@@ -49,7 +54,8 @@ class CalendarController : Typed2EpoxyController<List<List<DayEntry>>, Subject<D
                 .primaryMonth(primaryMonth)
                 .primaryYear(primaryYear)
                 .contents(list)
-                .updateSubject(subject)
+                .updateSubject(onClickSubject)
+                .longClickSubject(onLongClickSubject)
 
             if (data.indexOf(list) == (data.size - 1)) {
                 println()

@@ -70,6 +70,10 @@ class MainRepository(val dataSource: DataSource) {
             .doOnSuccess { lastDayEntry = it }
     }
 
+    fun getDayById(id: String): Single<DayEntry> {
+        return dataSource.getSpecificDay(id)
+    }
+
     fun isNoteChanged(text: String) = lastDayEntry.note != text
     fun changeNoteAndSaveCurrentEntry(text: String) {
         lastDayEntry.note = text

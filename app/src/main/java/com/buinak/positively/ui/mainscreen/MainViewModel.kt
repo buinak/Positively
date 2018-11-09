@@ -51,6 +51,8 @@ class MainViewModel : ViewModel() {
 
     fun onDayResetToToday() = requestRepositoryDayAndSubscribe()
     fun onDaySelected(dayOfTheWeek: DayOfTheWeek) = requestRepositoryDayAndSubscribe(dayOfTheWeek)
+    fun onDayByIdSelected(id: String) = requestRepositoryDayAndSubscribe(id)
+
     fun onGoRightClicked() = requestRepositoryDayAndSubscribe(1)
     fun onGoLeftClicked() = requestRepositoryDayAndSubscribe(1, true)
 
@@ -58,6 +60,16 @@ class MainViewModel : ViewModel() {
     private fun requestRepositoryDayAndSubscribe(difference: Int, backwards: Boolean = false) {
         dayDisposable?.dispose()
         dayDisposable = repository.getDayWithDifference(difference, backwards)
+            .subscribeOn(Schedulers.io())
+            .subscribe { it ->
+                currentSelectedDay.postValue(it)
+                currentMonth.postValue(Month.values()[it.monthOfTheYear].toString())
+            }
+    }
+
+    private fun requestRepositoryDayAndSubscribe(id: String) {
+        dayDisposable?.dispose()
+        dayDisposable = repository.getDayById(id)
             .subscribeOn(Schedulers.io())
             .subscribe { it ->
                 currentSelectedDay.postValue(it)

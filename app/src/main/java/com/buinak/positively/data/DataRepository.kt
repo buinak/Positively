@@ -23,6 +23,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 class DataRepository(val localDataSource: LocalDataSource) : DataSource {
+    override fun getSpecificDay(id: String): Single<DayEntry> {
+        return localDataSource.getSpecificDay(id)
+    }
+
     override fun getSpecificDayObservable(year: Int, month: Int, day: Int): Observable<DayEntry> =
         localDataSource.getSpecificDayObservable(year, month, day)
 
