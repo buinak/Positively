@@ -77,12 +77,9 @@ class CalendarActivity : BaseActivity() {
             viewModel.setDate(selectedMonth, selectedYear)
         }
 
-
+        recyclerView.adapter = controller.adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         viewModel.getDaysLiveData().observe(this, Observer {
-            if (recyclerView.adapter == null) {
-                recyclerView.adapter = controller.adapter
-            }
             if (!hasBeenInitialised) {
                 controller.setData(it, pressedDateSubject, longPressedDateSubject)
             } else {
@@ -107,15 +104,20 @@ class CalendarActivity : BaseActivity() {
         compositeDisposable.add(pressedDateSubject.subscribe { viewModel.onDaySelected(it) })
         compositeDisposable.add(longPressedDateSubject.subscribe { dayEntry ->
             viewModel.getDayEntryIdForModification(dayEntry).observe(this, Observer { id ->
-                val resultIntent = Intent()
-                resultIntent.putExtra(Constants.RESULT_ID_TAG, id)
-                setResult(Constants.ACTIVITY_REQUEST_CODE, resultIntent)
-                finish()
+                finishActivity(id)
             })
         })
+
         arrowLeft.setOnClickListener { viewModel.goOneMonthBehind() }
         arrowRight.setOnClickListener { viewModel.goOneMonthAhead() }
         dateTextView.setOnClickListener { viewModel.resetDate() }
+    }
+
+    private fun finishActivity(id: String?) {
+        val resultIntent = Intent()
+        resultIntent.putExtra(Constants.RESULT_ID_TAG, id)
+        setResult(Constants.ACTIVITY_REQUEST_CODE, resultIntent)
+        finish()
     }
 
     private fun changeColours(dayEntry: DayEntry) {
@@ -151,5 +153,10 @@ class CalendarActivity : BaseActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putBoolean("isRestarted", false)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.Month
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -49,11 +50,19 @@ class CalendarViewModel : ViewModel() {
 
     private fun getCurrentFiveWeeks() {
         monthDisposable?.dispose()
-        monthDisposable = repository.getCurrentFiveWeeks()
+        monthDisposable = getCurrentFiveWeeksWithAction()
             .subscribeOn(Schedulers.io())
+            .subscribe()
+    }
+
+    private fun getCurrentFiveWeeksWithAction(): Observable<ArrayList<List<DayEntry>>> {
+        return repository.getCurrentFiveWeeks()
             .map { list -> splitTheListIntoWeeks(list) }
-            .subscribe { it ->
-                weeksForTheSelectedMonth.postValue(it)
+            .doOnNext { it ->
+                val existing = weeksForTheSelectedMonth.value
+                val sameList = existing?.get(3)?.get(3) == it[3][3]
+
+                if (!sameList) weeksForTheSelectedMonth.postValue(it)
 
                 val currentYear = repository.getCurrentYear()
                 val currentMonth = (repository.getCurrentMonth() + 1)
@@ -114,7 +123,19 @@ class CalendarViewModel : ViewModel() {
 
     fun resetDate() {
         repository.resetToCurrent()
-        getCurrentFiveWeeks()
+
+        monthDisposable?.dispose()
+        monthDisposable = getCurrentFiveWeeksWithAction()
+            .subscribeOn(Schedulers.io())
+            .map { list ->
+                val currentDayEntry = DayEntry(
+                    repository.getCurrentDayOfTheMonth(),
+                    repository.getCurrentMonth(),
+                    repository.getCurrentYear()
+                )
+                return@map list.flatten().first { it == currentDayEntry }
+            }
+            .subscribe { currentSelectedDay.postValue(it) }
     }
 
     fun onDaySelected(dayEntry: DayEntry) {
