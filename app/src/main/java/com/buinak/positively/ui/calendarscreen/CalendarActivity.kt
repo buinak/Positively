@@ -110,7 +110,9 @@ class CalendarActivity : BaseActivity() {
 
         arrowLeft.setOnClickListener { viewModel.goOneMonthBehind() }
         arrowRight.setOnClickListener { viewModel.goOneMonthAhead() }
+        
         dateTextView.setOnClickListener { viewModel.resetDate() }
+        monthTextView.setOnClickListener { viewModel.resetDate() }
     }
 
     private fun finishActivity(id: String?) {
