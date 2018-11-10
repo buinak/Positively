@@ -56,7 +56,6 @@ class CalendarActivity : BaseActivity() {
     private var longPressedDateSubject: PublishSubject<DayEntry> = PublishSubject.create<DayEntry>()
 
     private val compositeDisposable = CompositeDisposable()
-    private var hasBeenInitialised = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,19 +74,10 @@ class CalendarActivity : BaseActivity() {
         recyclerView.adapter = controller.adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         viewModel.getDaysLiveData().observe(this, Observer {
-            if (!hasBeenInitialised) {
-                controller.setData(it, pressedDateSubject, longPressedDateSubject)
-            } else {
-//                pressedDateSubject = BehaviorSubject.create()
-//                longPressedDateSubject = PublishSubject.create()
-                controller.setData(it, pressedDateSubject, longPressedDateSubject)
-            }
+            controller.setData(it, pressedDateSubject, longPressedDateSubject)
         })
         viewModel.getCurrentCalendarDateLiveData()
-            .observe(this, Observer { date ->
-                val d = date
-                dateTextView.text = date
-            })
+            .observe(this, Observer { dateTextView.text = it })
         viewModel.getCurrentCalendarMonthLiveData()
             .observe(this, Observer { monthTextView.text = it })
         viewModel.getCurrentSelectedDay()

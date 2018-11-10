@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.Month
-import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -45,10 +44,7 @@ class CalendarViewModel : ViewModel() {
     private var lastSelected: DayEntry? = null
 
     //new live datas
-    private val controllerLiveData = MutableLiveData<CalendarController>()
     private lateinit var idForFinishingLiveData: MutableLiveData<String>
-    //observables
-
 
     init {
         PositivelyApplication.inject(this)
@@ -190,8 +186,6 @@ class CalendarViewModel : ViewModel() {
             .subscribe { idForFinishingLiveData.postValue(it) }
     }
 
-
-    fun getControllerLiveData(): LiveData<CalendarController> = controllerLiveData
     fun getIdForFinishingLiveData(): LiveData<String> = idForFinishingLiveData
 
     override fun onCleared() {
