@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.Month
+import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -43,10 +44,24 @@ class CalendarViewModel : ViewModel() {
     private val currentSelectedDay = MutableLiveData<DayEntry>()
     private var lastSelected: DayEntry? = null
 
+    //new live datas
+    private val controllerLiveData = MutableLiveData<CalendarController>()
+    private lateinit var idForFinishingLiveData: MutableLiveData<String>
+    //observables
+
 
     init {
         PositivelyApplication.inject(this)
     }
+
+    fun onBind(dayEntry: DayEntry) {
+        idForFinishingLiveData = MutableLiveData()
+        repository.setDate(dayEntry.monthOfTheYear, dayEntry.year)
+        getCurrentFiveWeeks()
+
+        onDaySelected(dayEntry)
+    }
+
 
     private fun getCurrentFiveWeeks() {
         monthDisposable?.dispose()
@@ -116,11 +131,6 @@ class CalendarViewModel : ViewModel() {
         getCurrentFiveWeeks()
     }
 
-    fun setDate(month: Int, year: Int) {
-        repository.setDate(month, year)
-        getCurrentFiveWeeks()
-    }
-
     fun resetDate() {
         repository.resetToCurrent()
 
@@ -172,16 +182,17 @@ class CalendarViewModel : ViewModel() {
             }
     }
 
-    fun getDayEntryIdForModification(dayEntry: DayEntry): LiveData<String> {
-        val liveData = MutableLiveData<String>()
+    fun onDayForModificationSelected(dayEntry: DayEntry) {
         val disposable = repository.getDayEntry(dayEntry)
             .subscribeOn(Schedulers.io())
             .map { it -> it.id }
             .take(1)
-            .subscribe { liveData.postValue(it) }
-
-        return liveData
+            .subscribe { idForFinishingLiveData.postValue(it) }
     }
+
+
+    fun getControllerLiveData(): LiveData<CalendarController> = controllerLiveData
+    fun getIdForFinishingLiveData(): LiveData<String> = idForFinishingLiveData
 
     override fun onCleared() {
         super.onCleared()

@@ -44,14 +44,13 @@ class CalendarActivity : BaseActivity() {
     private val dateTextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
     private val monthTextView by lazy { findViewById<TextView>(R.id.textView_calendar_month) }
     private val noteTextView by lazy { findViewById<TextView>(R.id.textView_note) }
-
     private val arrowRight by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
     private val arrowLeft by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
 
 
     private val controller by lazy { CalendarController() }
 
-    private var currentColour: Int = -1
+    private var wasColourChanged: Boolean = false
 
     private var pressedDateSubject: BehaviorSubject<DayEntry> = BehaviorSubject.create<DayEntry>()
     private var longPressedDateSubject: PublishSubject<DayEntry> = PublishSubject.create<DayEntry>()
@@ -68,13 +67,9 @@ class CalendarActivity : BaseActivity() {
             val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
             val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
             val selectedYear = intent.getIntExtra(Constants.CURRENT_YEAR_TAG, -1)
-            if (selectedDay != -1 && selectedMonth != -1) {
-                val dayEntry = DayEntry(selectedDay, selectedMonth, selectedYear)
-                pressedDateSubject.onNext(dayEntry)
-                viewModel.onDaySelected(dayEntry)
-            }
-
-            viewModel.setDate(selectedMonth, selectedYear)
+            val dayEntry = DayEntry(selectedDay, selectedMonth, selectedYear)
+            pressedDateSubject.onNext(dayEntry)
+            viewModel.onBind(dayEntry)
         }
 
         recyclerView.adapter = controller.adapter
@@ -83,34 +78,35 @@ class CalendarActivity : BaseActivity() {
             if (!hasBeenInitialised) {
                 controller.setData(it, pressedDateSubject, longPressedDateSubject)
             } else {
-                pressedDateSubject = BehaviorSubject.create()
-                longPressedDateSubject = PublishSubject.create()
+//                pressedDateSubject = BehaviorSubject.create()
+//                longPressedDateSubject = PublishSubject.create()
                 controller.setData(it, pressedDateSubject, longPressedDateSubject)
             }
         })
         viewModel.getCurrentCalendarDateLiveData()
-            .observe(this, Observer { dateTextView.text = it })
+            .observe(this, Observer { date ->
+                val d = date
+                dateTextView.text = date
+            })
         viewModel.getCurrentCalendarMonthLiveData()
             .observe(this, Observer { monthTextView.text = it })
-
         viewModel.getCurrentSelectedDay()
             .observe(this, Observer { dayEntry ->
                 changeColours(dayEntry)
                 noteTextView.text = dayEntry.note
                 pressedDateSubject.onNext(dayEntry)
             })
+        viewModel.getIdForFinishingLiveData().observe(this, Observer { finishActivity(it) })
 
         //it is unusable because there is no way for the observable to emit once the activity is gone
         compositeDisposable.add(pressedDateSubject.subscribe { viewModel.onDaySelected(it) })
-        compositeDisposable.add(longPressedDateSubject.subscribe { dayEntry ->
-            viewModel.getDayEntryIdForModification(dayEntry).observe(this, Observer { id ->
-                finishActivity(id)
-            })
+        compositeDisposable.add(longPressedDateSubject.subscribe {
+            viewModel.onDayForModificationSelected(it)
         })
 
         arrowLeft.setOnClickListener { viewModel.goOneMonthBehind() }
         arrowRight.setOnClickListener { viewModel.goOneMonthAhead() }
-        
+
         dateTextView.setOnClickListener { viewModel.resetDate() }
         monthTextView.setOnClickListener { viewModel.resetDate() }
     }
@@ -132,11 +128,9 @@ class CalendarActivity : BaseActivity() {
             DayOfTheWeek.SATURDAY -> resources.getColor(R.color.saturdayColor)
             DayOfTheWeek.SUNDAY -> resources.getColor(R.color.sundayColor)
         }
-        when (currentColour) {
-            -1 -> animateColour(colour, 0)
-            else -> animateColour(colour)
-        }
-        currentColour = colour
+
+        if (wasColourChanged) animateColour(colour) else animateColour(colour, 0)
+            .also { wasColourChanged = true }
     }
 
     private fun animateColour(
