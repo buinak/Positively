@@ -2,6 +2,7 @@
   <dictionary name="Foreseer">
     <words>
       <w>unmanaged</w>
+      <w>viewmodel</w>
     </words>
   </dictionary>
 </component>

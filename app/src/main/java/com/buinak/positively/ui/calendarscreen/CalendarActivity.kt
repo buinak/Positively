@@ -52,7 +52,9 @@ class CalendarActivity : BaseActivity() {
 
     private var wasColourChanged: Boolean = false
 
+    //this emits DayEntry whenever a textview inside the calendar is clicked
     private var pressedDateSubject: BehaviorSubject<DayEntry> = BehaviorSubject.create<DayEntry>()
+    //emits DayEntry whenever a textview inside the calendar is long-pressed.
     private var longPressedDateSubject: PublishSubject<DayEntry> = PublishSubject.create<DayEntry>()
 
     private val compositeDisposable = CompositeDisposable()
@@ -61,7 +63,9 @@ class CalendarActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         val isFreshlyStarted = savedInstanceState?.getBoolean("isFreshlyStarted") ?: true
-
+        //if this is a fresh start (activity launched from the main activity directly), we need to
+        //set the date in the viewmodel. Otherwise, if the activity got restarted (configuration changes)
+        //we just subscribe to the data in the viewmodel
         if (isFreshlyStarted) {
             val selectedDay = intent.getIntExtra(Constants.CURRENT_DATE_TAG, -1)
             val selectedMonth = intent.getIntExtra(Constants.CURRENT_MONTH_TAG, -1)
