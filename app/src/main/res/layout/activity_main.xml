@@ -215,11 +215,9 @@
             <EditText
                 android:id="@+id/editText_note"
                 style="@style/Widget.MaterialComponents.TextInputEditText.FilledBox"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:ems="10"
@@ -228,9 +226,36 @@
                 android:inputType="textMultiLine"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_howWasYourDay" />
+                app:layout_constraintEnd_toEndOf="@+id/imageView_good"
+                app:layout_constraintStart_toStartOf="@+id/imageView_sad"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_sad" />
+
+            <ImageView
+                android:id="@+id/imageView_sad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="@+id/textView_howWasYourDay"
+                app:layout_constraintTop_toBottomOf="@+id/textView_howWasYourDay"
+                app:srcCompat="@drawable/ic_bad" />
+
+            <ImageView
+                android:id="@+id/imageView_neutral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/imageView_good"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/imageView_sad"
+                app:layout_constraintTop_toTopOf="@+id/imageView_sad"
+                app:srcCompat="@drawable/ic_neutral" />
+
+            <ImageView
+                android:id="@+id/imageView_good"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/textView_howWasYourDay"
+                app:layout_constraintTop_toTopOf="@+id/imageView_neutral"
+                app:srcCompat="@drawable/ic_good" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

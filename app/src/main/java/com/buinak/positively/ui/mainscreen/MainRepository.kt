@@ -75,8 +75,14 @@ class MainRepository(val dataSource: DataSource) {
     }
 
     fun isNoteChanged(text: String) = lastDayEntry.note != text
+
     fun changeNoteAndSaveCurrentEntry(text: String) {
         lastDayEntry.note = text
+        dataSource.saveDay(lastDayEntry).subscribe()
+    }
+
+    fun changeMoodAndSaveCurrentEntry(mood: String) {
+        lastDayEntry.mood = mood
         dataSource.saveDay(lastDayEntry).subscribe()
     }
 }

@@ -18,9 +18,7 @@ package com.buinak.positively.entities
 
 enum class Mood {
     GOOD,
-    AMAZING,
-    BAD,
-    GREAT,
-    TERRIBLE,
-    THE_WORST,
+    NEUTRAL,
+    SAD,
+    UNKNOWN
 }

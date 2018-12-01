@@ -30,14 +30,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
+import com.buinak.positively.entities.Mood
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.CalendarActivity
 import com.buinak.positively.ui.settingsscreen.SettingsActivity
 import com.buinak.positively.utils.Constants
 import com.buinak.positively.utils.RxUtils
 import com.buinak.positively.utils.ViewUtils
+import com.devs.vectorchildfinder.VectorChildFinder
 import io.reactivex.Observable
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -45,11 +46,17 @@ class MainActivity : BaseActivity() {
 
     private lateinit var viewModel: MainViewModel
     private val allDayTextViewMap: HashMap<TextView, DayOfTheWeek> = HashMap()
+    private val moodsImageViewMap: HashMap<Mood, ImageView> = HashMap()
 
     private val dateTextView by lazy { findViewById<TextView>(R.id.textView_date) }
     private val monthTextView by lazy { findViewById<TextView>(R.id.textView_month) }
     private val howWasYourDayTextView by lazy { findViewById<TextView>(R.id.textView_howWasYourDay) }
     private val noteEditText by lazy { findViewById<EditText>(R.id.editText_note) }
+
+    private val sadMoodImageView by lazy { findViewById<ImageView>(R.id.imageView_sad) }
+    private val neutralMoodImageView by lazy { findViewById<ImageView>(R.id.imageView_neutral) }
+    private val goodMoodImageView by lazy { findViewById<ImageView>(R.id.imageView_good) }
+
 
     private val arrowRightImageView by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
     private val arrowLeftImageView by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
@@ -65,6 +72,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         makeViewsHideKeyboard(mainLayout)
 
+        fillMapWithTextViews()
+        fillMoodMapWithViews()
         initialiseClickListeners()
 
         viewModel = ViewModelProviders.of(this)
@@ -76,6 +85,8 @@ class MainActivity : BaseActivity() {
             onDayOfTheWeekSelected(DayOfTheWeek.valueOf(selectedDay.dayOfTheWeek))
             dateTextView.text = selectedDay.getDateString()
             noteEditText.setText(selectedDay.note)
+
+            setMoodDrawableColor(Mood.valueOf(selectedDay.mood))
         })
         viewModel.getCurrentMonth().observe(this, Observer {
             monthTextView.text = it
@@ -87,7 +98,6 @@ class MainActivity : BaseActivity() {
     override fun getNavigationMenuItemId(): Int = R.id.navigation_home
 
     private fun initialiseClickListeners() {
-        fillMapWithTextViews()
         //for all day of the week text views
         allDayTextViewMap.keys.forEach { textView ->
             textView.setOnClickListener { clickedView ->
@@ -95,6 +105,12 @@ class MainActivity : BaseActivity() {
                 //can not be null
                 val dayOfTheWeek = allDayTextViewMap[clickedTextView] as DayOfTheWeek
                 viewModel.onDaySelected(dayOfTheWeek)
+            }
+        }
+        moodsImageViewMap.entries.forEach { entry ->
+            entry.value.setOnClickListener {
+                setMoodDrawableColor(entry.key)
+                viewModel.onMoodSelected(entry.key)
             }
         }
         //for go-to-the-next-week arrows
@@ -190,6 +206,12 @@ class MainActivity : BaseActivity() {
         allDayTextViewMap[findViewById(R.id.textView_sunday)] = DayOfTheWeek.SUNDAY
     }
 
+    private fun fillMoodMapWithViews() {
+        moodsImageViewMap[Mood.GOOD] = findViewById(R.id.imageView_good)
+        moodsImageViewMap[Mood.NEUTRAL] = findViewById(R.id.imageView_neutral)
+        moodsImageViewMap[Mood.SAD] = findViewById(R.id.imageView_sad)
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navigationView.postDelayed({
@@ -208,6 +230,37 @@ class MainActivity : BaseActivity() {
             }
         }, Constants.ANY_ACTIVITY_START_DELAY)
         return true
+    }
+
+
+    private fun resetMoodDrawables() {
+        moodsImageViewMap[Mood.GOOD]!!.setImageDrawable(resources.getDrawable(R.drawable.ic_good))
+        moodsImageViewMap[Mood.NEUTRAL]!!.setImageDrawable(resources.getDrawable(R.drawable.ic_neutral))
+        moodsImageViewMap[Mood.SAD]!!.setImageDrawable(resources.getDrawable(R.drawable.ic_bad))
+    }
+
+    private fun setMoodDrawableColor(mood: Mood) {
+        resetMoodDrawables()
+        when (mood) {
+            Mood.GOOD -> {
+                val vector =
+                    VectorChildFinder(this, R.drawable.ic_good, moodsImageViewMap[Mood.GOOD])
+                val path1 = vector.findPathByName("inside_path")
+                path1.fillColor = resources.getColor(R.color.goodMoodColor)
+            }
+            Mood.NEUTRAL -> {
+                val vector =
+                    VectorChildFinder(this, R.drawable.ic_neutral, moodsImageViewMap[Mood.NEUTRAL])
+                val path1 = vector.findPathByName("inside_path")
+                path1.fillColor = resources.getColor(R.color.neutralMoodColor)
+            }
+            Mood.SAD -> {
+                val vector = VectorChildFinder(this, R.drawable.ic_bad, moodsImageViewMap[Mood.SAD])
+                val path1 = vector.findPathByName("inside_path")
+                path1.fillColor = resources.getColor(R.color.sadMoodColor)
+            }
+            Mood.UNKNOWN -> return
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -21,6 +21,11 @@
     <color name="colorPrimaryDark">#3949ab</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="whiteColor">#FFF</color>
+    <color name="goodMoodColor">#2E7D32</color>
+    <color name="neutralMoodColor">#F9A825</color>
+    <color name="sadMoodColor">#C62828</color>
+
     <color name="mondayColor">#7cb342</color>
     <color name="tuesdayColor">#f57c00</color>
     <color name="wednesdayColor">#00acc1</color>

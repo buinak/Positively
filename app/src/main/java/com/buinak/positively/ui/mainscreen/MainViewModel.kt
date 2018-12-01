@@ -23,6 +23,7 @@ import com.buinak.positively.application.PositivelyApplication
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
 import com.buinak.positively.entities.Month
+import com.buinak.positively.entities.Mood
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -103,4 +104,6 @@ class MainViewModel : ViewModel() {
             .filter { repository.isNoteChanged(it) }
             .subscribe { repository.changeNoteAndSaveCurrentEntry(it) }
     }
+
+    fun onMoodSelected(mood: Mood) = repository.changeMoodAndSaveCurrentEntry(mood.toString())
 }

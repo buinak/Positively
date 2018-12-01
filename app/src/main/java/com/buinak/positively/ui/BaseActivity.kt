@@ -28,14 +28,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 abstract class BaseActivity : AppCompatActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener {
 
-    protected lateinit var navigationView: BottomNavigationView
+    protected val navigationView: BottomNavigationView by lazy {
+        findViewById<BottomNavigationView>(
+            R.id.navigation
+        )
+    }
     protected var finish: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getContentViewId())
 
-        navigationView = findViewById(R.id.navigation)
         navigationView.setOnNavigationItemSelectedListener(this)
     }
 

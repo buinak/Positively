@@ -18,17 +18,18 @@ package com.buinak.positively.utils
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.TypedValue
 import android.view.View
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import android.app.Activity
-import android.view.inputmethod.InputMethodManager
+import com.devs.vectorchildfinder.VectorDrawableCompat
 
 
 object ViewUtils {
@@ -49,6 +50,23 @@ object ViewUtils {
         val backgroundColorAnimator = ObjectAnimator.ofObject(
             view,
             "backgroundColor",
+            ArgbEvaluator(),
+            colourFrom,
+            colourTo
+        )
+        backgroundColorAnimator.duration = duration.toLong()
+        backgroundColorAnimator.start()
+    }
+
+    fun animatePathColourChange(
+        path: VectorDrawableCompat.VFullPath,
+        colourFrom: Int,
+        colourTo: Int,
+        duration: Int
+    ) {
+        val backgroundColorAnimator = ObjectAnimator.ofObject(
+            path,
+            "fillColor",
             ArgbEvaluator(),
             colourFrom,
             colourTo
