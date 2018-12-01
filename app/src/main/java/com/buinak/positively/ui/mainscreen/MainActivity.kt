@@ -22,7 +22,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -47,14 +46,14 @@ class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private val allDayTextViewMap: HashMap<TextView, DayOfTheWeek> = HashMap()
 
-    private lateinit var dateTextView: TextView
-    private lateinit var monthTextView: TextView
-    private lateinit var howWasYourDayTextView: TextView
-    private lateinit var noteEditText: EditText
+    private val dateTextView by lazy { findViewById<TextView>(R.id.textView_date) }
+    private val monthTextView by lazy { findViewById<TextView>(R.id.textView_month) }
+    private val howWasYourDayTextView by lazy { findViewById<TextView>(R.id.textView_howWasYourDay) }
+    private val noteEditText by lazy { findViewById<EditText>(R.id.editText_note) }
 
-    private lateinit var arrowRightImageView: ImageView
-    private lateinit var arrowLeftImageView: ImageView
-    private lateinit var settingsImageButton: ImageButton
+    private val arrowRightImageView by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
+    private val arrowLeftImageView by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
+    private val settingsImageButton by lazy { findViewById<ImageView>(R.id.imageButton_settings) }
 
     private val mainLayout by lazy { findViewById<ConstraintLayout>(R.id.main_activity_constraint_layout)}
 
@@ -65,8 +64,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         makeViewsHideKeyboard(mainLayout)
-        
-        initialiseViewVariables()
+
         initialiseClickListeners()
 
         viewModel = ViewModelProviders.of(this)
@@ -88,28 +86,15 @@ class MainActivity : BaseActivity() {
 
     override fun getNavigationMenuItemId(): Int = R.id.navigation_home
 
-    private fun initialiseViewVariables() {
-        dateTextView = findViewById(R.id.textView_date)
-        monthTextView = findViewById(R.id.textView_month)
-        howWasYourDayTextView = findViewById(R.id.textView_howWasYourDay)
-
-        noteEditText = findViewById(R.id.editText_note)
-
-        arrowRightImageView = findViewById(R.id.imageView_arrowRight)
-        arrowLeftImageView = findViewById(R.id.imageView_arrowLeft)
-
-        settingsImageButton = findViewById(R.id.imageButton_settings)
-    }
-
     private fun initialiseClickListeners() {
         fillMapWithTextViews()
         //for all day of the week text views
         allDayTextViewMap.keys.forEach { textView ->
             textView.setOnClickListener { clickedView ->
                 val clickedTextView = clickedView as TextView
-                val dayOfTheWeek = allDayTextViewMap[clickedTextView]
                 //can not be null
-                viewModel.onDaySelected(dayOfTheWeek!!)
+                val dayOfTheWeek = allDayTextViewMap[clickedTextView] as DayOfTheWeek
+                viewModel.onDaySelected(dayOfTheWeek)
             }
         }
         //for go-to-the-next-week arrows
