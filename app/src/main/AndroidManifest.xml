@@ -28,6 +28,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.settingsscreen.SettingsActivity"
+            android:theme="@style/SettingsTheme"
             android:parentActivityName=".ui.mainscreen.MainActivity"></activity>
         <activity android:name=".ui.calendarscreen.CalendarActivity" />
         <activity android:name=".ui.mainscreen.MainActivity">

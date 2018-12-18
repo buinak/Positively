@@ -20,8 +20,6 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.buinak.positively.R
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -31,11 +29,6 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        backImageButton = findViewById(R.id.imageButton_back)
-        backImageButton.setOnClickListener {
-            Observable.timer(100, TimeUnit.MILLISECONDS)
-                .subscribe { finish() }
-        }
     }
 
     override fun onPause() {

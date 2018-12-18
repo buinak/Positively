@@ -17,4 +17,5 @@
 <resources>
     <string name="app_name">Positively</string>
     <string name="how_was_your_day">How was your day?</string>
+    <string name="enable_daily_notifications">Enable daily notifications</string>
 </resources>
