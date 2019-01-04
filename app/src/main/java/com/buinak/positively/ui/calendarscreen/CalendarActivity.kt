@@ -18,6 +18,7 @@ package com.buinak.positively.ui.calendarscreen
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Observer
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.buinak.positively.R
 import com.buinak.positively.entities.DayEntry
 import com.buinak.positively.entities.DayOfTheWeek
+import com.buinak.positively.entities.Mood
 import com.buinak.positively.ui.BaseActivity
 import com.buinak.positively.ui.calendarscreen.recyclerview.CalendarController
 import com.buinak.positively.utils.Constants
@@ -34,6 +36,7 @@ import com.buinak.positively.utils.ViewUtils
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.time.Month
 
 class CalendarActivity : BaseActivity() {
     private val viewModel: CalendarViewModel by lazy {
@@ -44,6 +47,8 @@ class CalendarActivity : BaseActivity() {
     private val dateTextView by lazy { findViewById<TextView>(R.id.textView_calendar_date) }
     private val monthTextView by lazy { findViewById<TextView>(R.id.textView_calendar_month) }
     private val noteTextView by lazy { findViewById<TextView>(R.id.textView_note) }
+    private val dayOfTheWeekView by lazy { findViewById<TextView>(R.id.textView_calendar_day_of_the_week) }
+    private val moodImageView by lazy { findViewById<ImageView>(R.id.imageView_calendar_mood) }
     private val arrowRight by lazy { findViewById<ImageView>(R.id.imageView_arrowRight) }
     private val arrowLeft by lazy { findViewById<ImageView>(R.id.imageView_arrowLeft) }
 
@@ -88,6 +93,16 @@ class CalendarActivity : BaseActivity() {
             .observe(this, Observer { dayEntry ->
                 changeColours(dayEntry)
                 noteTextView.text = dayEntry.note
+                var dateString = dayEntry.dayOfTheWeek.toLowerCase().capitalize()
+                dateString += ", ${dayEntry.dayOfTheMonth} ${Month.values()[dayEntry.monthOfTheYear].toString().toLowerCase().capitalize()} ${dayEntry.year}"
+                dayOfTheWeekView.text = dateString
+                moodImageView.visibility = View.VISIBLE
+                when (Mood.valueOf(dayEntry.mood)) {
+                    Mood.GOOD -> moodImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_good))
+                    Mood.NEUTRAL -> moodImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_neutral))
+                    Mood.SAD -> moodImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_bad))
+                    Mood.UNKNOWN -> moodImageView.visibility = View.GONE
+                }
                 pressedDateSubject.onNext(dayEntry)
             })
         viewModel.getIdForFinishingLiveData().observe(this, Observer { finishActivity(it) })
@@ -135,6 +150,7 @@ class CalendarActivity : BaseActivity() {
         ViewUtils.animateTextColourChange(dateTextView, colourTo, duration)
         ViewUtils.animateTextColourChange(monthTextView, colourTo, duration)
         ViewUtils.animateTextColourChange(noteTextView, colourTo, duration)
+        ViewUtils.animateTextColourChange(dayOfTheWeekView, colourTo, duration)
     }
 
     override fun getContentViewId(): Int = R.layout.activity_calendar

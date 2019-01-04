@@ -201,7 +201,7 @@
 
             <TextView
                 android:id="@+id/textView_howWasYourDay"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -223,19 +223,20 @@
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="Write something.."
-                android:includeFontPadding="false"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
                 android:inputType="textMultiLine"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/imageView_good"
-                app:layout_constraintStart_toStartOf="@+id/imageView_sad"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView_sad" />
 
             <ImageView
                 android:id="@+id/imageView_sad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_howWasYourDay"

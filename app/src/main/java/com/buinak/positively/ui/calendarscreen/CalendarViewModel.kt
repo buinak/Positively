@@ -141,7 +141,9 @@ class CalendarViewModel : ViewModel() {
                 )
                 return@map list.flatten().first { it == currentDayEntry }
             }
-            .subscribe { currentSelectedDay.postValue(it) }
+            .subscribe {
+                currentSelectedDay.postValue(it)
+            }
     }
 
     fun onDaySelected(dayEntry: DayEntry) {
