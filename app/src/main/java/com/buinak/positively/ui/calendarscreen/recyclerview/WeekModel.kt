@@ -93,7 +93,7 @@ abstract class WeekModel : EpoxyModelWithHolder<WeekModel.DateHolder>() {
                     val index = contents.indexOfFirst { it.dayOfTheMonth == date.dayOfTheMonth }
                     val selectedTextView = holder.textViews.getOrNull(index)
                     if (selectedTextView?.alpha == opacity) {
-                        selectedTextView.setBackgroundResource(R.drawable.circle_drawable)
+                        //selectedTextView.setBackgroundResource(R.drawable.circle_drawable)
                         selectedTextView.setTypeface(null, Typeface.BOLD)
                     }
                 }

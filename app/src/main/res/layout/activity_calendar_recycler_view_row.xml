@@ -35,8 +35,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_monday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -57,8 +57,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_tuesday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -80,8 +80,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_sunday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -103,8 +103,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_thursday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -126,8 +126,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_saturday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -148,8 +148,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_friday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
@@ -171,8 +171,8 @@
 
         <TextView
             android:id="@+id/textView_calendar_wednesday"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:gravity="center"
