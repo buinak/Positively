@@ -23,9 +23,6 @@ import com.buinak.positively.utils.CalendarUtils
 import io.reactivex.Single
 import java.util.*
 
-fun IntRange.random() =
-    Random().nextInt((endInclusive + 1) - start) + start
-
 class MainRepository(val dataSource: DataSource) {
 
     var currentYear = CalendarUtils.getCurrentYear()

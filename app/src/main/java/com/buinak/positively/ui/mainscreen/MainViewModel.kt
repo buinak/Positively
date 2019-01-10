@@ -106,4 +106,11 @@ class MainViewModel : ViewModel() {
     }
 
     fun onMoodSelected(mood: Mood) = repository.changeMoodAndSaveCurrentEntry(mood.toString())
+
+    override fun onCleared() {
+        super.onCleared()
+        dayDisposable?.dispose()
+        noteDisposable?.dispose()
+
+    }
 }

@@ -68,6 +68,7 @@ class CalendarRepository(val dataSource: DataSource) {
 
     fun resetToCurrent() {
         calendar = Calendar.getInstance()
+        disposable?.dispose()
     }
 
     private fun filterLists(
